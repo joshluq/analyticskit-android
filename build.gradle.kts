@@ -3,5 +3,6 @@ plugins {
     alias(libs.plugins.pluginkit.android.application) apply false
     alias(libs.plugins.pluginkit.android.library) apply false
     alias(libs.plugins.pluginkit.android.compose) apply false
+    alias(libs.plugins.pluginkit.android.hilt) apply false
     alias(libs.plugins.pluginkit.android.testing) apply false
 }

@@ -1,68 +1,118 @@
 # Analyticskit
 
-This is an Android library project generated from the Templatekit template.
+**"Turn user behavior into strategic insights."**
 
-## Structure
+Analyticskit is a modular tool built for data collection and user behavior analysis. It streamlines the tracking of custom events, screen navigation, and conversion funnels, featuring a flexible architecture that allows sending data to multiple providers (Firebase, Mixpanel, or custom backends) simultaneously.
 
-### `library/`
-The main reusable Android library component. This is the artifact that will be consumed by other projects.
+## 🚀 Key Features
 
-- **`src/main/java/`**: Main library source code
-- **`src/test/java/`**: Unit tests (JVM)
-- **`src/androidTest/java/`**: Instrumented tests (device/emulator)
-- **`src/main/res/`**: Library resources
-- **`consumer-rules.pro`**: ProGuard rules for library consumers
+- **Multi-Provider Support**: Route data to multiple analytics consumers (Firebase, Mixpanel, etc.) simultaneously.
+- **Rich Event Tracking**: Track custom events with detailed metadata.
+- **Navigation Monitoring**: Automatic or manual tracking of screen views and user flow.
+- **Conversion Funnels**: Specialized tracking for business-critical user journeys.
+- **Clean Architecture**: Decoupled business logic from specific provider implementations.
+- **Hilt Ready**: Full support for Dependency Injection for easy integration.
+- **Agnostic & Lightweight**: Zero required third-party dependencies in the core library.
 
-### `showcase/`
-A demonstration Android application that consumes the library. Use this app to:
+## 🏗 Architecture
 
-- Test the library API during development
-- Showcase how to use the library
-- Develop and validate features in an integrated environment
-- Run instrumented tests against the library
+Analyticskit follows **Clean Architecture** to ensure isolation of tracking logic and ease of expansion to new analytics platforms.
 
-The showcase app uses the same base package as the library (plus `.showcase`) for seamless integration.
+```mermaid
+graph TD
+    subgraph "Presentation Layer (SDK)"
+        M[AnalyticskitManager]
+    end
 
-## Building
+    subgraph "Domain Layer"
+        UC[TrackEventUseCase]
+        R[AnalyticsRepository Interface]
+        MOD[AnalyticsEvent Sealed Class]
+    end
 
-### Compile the library
-```bash
-./gradlew :library:assemble
+    subgraph "Data Layer"
+        RepoImpl[AnalyticsRepository Implementation]
+        DS[AnalyticsDataSource]
+        P[AnalyticsProvider Interface]
+    end
+
+    subgraph "Consumer Application"
+        ImplP[FirebaseProvider Implementation]
+        ExtLib[Firebase SDK]
+    end
+
+    M --> UC
+    UC --> R
+    RepoImpl -- implements --> R
+    RepoImpl --> DS
+    DS --> P
+    ImplP -- implements --> P
+    ImplP --> ExtLib
 ```
 
-### Run library tests
-```bash
-./gradlew :library:test
+## 🛠 Usage Example
+
+### 1. Implement a Provider
+Create a bridge between Analyticskit and your preferred service.
+
+```kotlin
+class ConsoleAnalyticsProvider : AnalyticsProvider {
+    override val key: String = "CONSOLE"
+
+    override suspend fun track(event: AnalyticsEvent) {
+        when (event) {
+            is AnalyticsEvent.Custom -> println("Event: ${event.name}")
+            is AnalyticsEvent.ScreenView -> println("Screen: ${event.screenName}")
+            is AnalyticsEvent.FunnelStep -> println("Funnel: ${event.funnelName} Step: ${event.stepName}")
+        }
+    }
+}
 ```
 
-### Build the showcase app
-```bash
-./gradlew :showcase:assembleDebug
+### 2. Initialize and Inject
+Add your providers to the `AnalyticskitManager` (usually in your `Application` class).
+
+```kotlin
+@HiltAndroidApp
+class MyAwesomeApp : Application() {
+    @Inject lateinit var analyticskitManager: AnalyticskitManager
+
+    override fun onCreate() {
+        super.onCreate()
+        analyticskitManager.addProvider(ConsoleAnalyticsProvider())
+    }
+}
 ```
 
-### Run showcase instrumented tests
-```bash
-./gradlew :showcase:connectedAndroidTest
+### 3. Track Events
+Use the manager to record data from anywhere in your app.
+
+```kotlin
+// Track a custom event
+analyticskitManager.track(
+    AnalyticsEvent.Custom("purchase_completed", mapOf("amount" to 99.99))
+)
+
+// Track screen navigation
+analyticskitManager.track(
+    AnalyticsEvent.ScreenView("CheckoutScreen")
+)
 ```
 
-## Development Workflow
+## 📂 Project Structure
 
-1. **Add library code** to `library/src/main/java/es/joshluq/analyticskit/`
-2. **Write unit tests** in `library/src/test/java/es/joshluq/analyticskit/`
-3. **Write instrumented tests** in `library/src/androidTest/java/es/joshluq/analyticskit/`
-4. **Integrate the library** in the showcase app at `showcase/src/main/java/es.joshluq.analyticskit/showcase/` to validate the consumer experience
-5. **Add showcase tests** in `showcase/src/test/java/es.joshluq.analyticskit/showcase/` or `showcase/src/androidTest/java/es.joshluq.analyticskit/showcase/`
-6. **Use the showcase app** to develop and test features in a real Android environment
+- `:analyticskit`: The core library module.
+    - `sdk`: Public API (`AnalyticskitManager`).
+    - `domain`: Business logic, Repository interfaces, and `AnalyticsEvent` models.
+    - `data`: Repository implementation, DataSources, and Provider abstractions.
+- `:showcase`: A sample app demonstrating integration, Hilt usage, and provider implementation.
 
-**Note:** The package structure is automatically created during template generation. All source files are organized with the correct package structure from the start.
+## 🧪 Quality Assurance
 
-This Consumer-Driven pattern ensures your library API is always tested in a realistic consumer context.
+- **KDocs**: 100% API documentation for public members.
+- **Unit Testing**: High logic coverage using **JUnit**, **MockK**, and **Coroutines Test**.
+- **Performance**: Thread-safe provider management and low-overhead event dispatching.
 
-## Configuration
+---
 
-This generated project includes a `project-config.properties` file at the project root with overridable values:
-
-- `catalogVersion` : the version coordinate used by the version catalog (e.g. `es.joshluq.kit.pluginkit:catalog:0.0.1-SNAPSHOT`).
-- `libraryVersion` : the default version for the `:library` artifact (e.g. `1.0.0`).
-
-Edit `project-config.properties` in the generated project to change these values without modifying build scripts directly.
+*Developed with focus on scalability and data precision.*
