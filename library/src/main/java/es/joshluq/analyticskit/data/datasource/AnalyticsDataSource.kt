@@ -33,7 +33,10 @@ class AnalyticsDataSource {
      * @param event The event to be sent.
      * @param providerKey The key of the provider to send the event to (optional).
      */
-    suspend fun sendEvent(event: AnalyticsEvent, providerKey: String? = null) {
+    suspend fun sendEvent(
+        event: AnalyticsEvent,
+        providerKey: String? = null,
+    ) {
         getProviders(providerKey).forEach { it.track(event) }
     }
 
@@ -42,11 +45,10 @@ class AnalyticsDataSource {
      * If a key is provided, only the matching provider is returned.
      * If no key is provided, all providers are returned (default behavior).
      */
-    private fun getProviders(key: String?): List<AnalyticsProvider> {
-        return if (key != null) {
+    private fun getProviders(key: String?): List<AnalyticsProvider> =
+        if (key != null) {
             providers.filter { it.key == key }
         } else {
             providers
         }
-    }
 }

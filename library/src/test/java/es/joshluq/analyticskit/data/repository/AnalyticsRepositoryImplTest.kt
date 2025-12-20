@@ -10,22 +10,22 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 class AnalyticsRepositoryImplTest {
-
     private val dataSource: AnalyticsDataSource = mockk()
     private val repository = AnalyticsRepositoryImpl(dataSource)
 
     @Test
-    fun `when track is called then send event to data source`() = runTest {
-        // Given
-        val event = AnalyticsEvent.Custom("test_event")
-        coEvery { dataSource.sendEvent(event, null) } returns Unit
+    fun `when track is called then send event to data source`() =
+        runTest {
+            // Given
+            val event = AnalyticsEvent.Custom("test_event")
+            coEvery { dataSource.sendEvent(event, null) } returns Unit
 
-        // When
-        repository.track(event, null)
+            // When
+            repository.track(event, null)
 
-        // Then
-        coVerify(exactly = 1) { dataSource.sendEvent(event, null) }
-    }
+            // Then
+            coVerify(exactly = 1) { dataSource.sendEvent(event, null) }
+        }
 
     @Test
     fun `when addProvider is called then add provider to data source`() {

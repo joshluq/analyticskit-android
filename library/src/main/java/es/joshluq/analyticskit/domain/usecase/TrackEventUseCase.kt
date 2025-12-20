@@ -12,9 +12,8 @@ import kotlinx.coroutines.flow.flowOn
  * @property repository The repository to handle the event tracking.
  */
 class TrackEventUseCase(
-    private val repository: AnalyticsRepository
+    private val repository: AnalyticsRepository,
 ) : UseCase<TrackEventUseCase.Input, NoneOutput> {
-
     /**
      * Input parameters for the [TrackEventUseCase].
      * @property event The analytics event to be tracked.
@@ -22,7 +21,7 @@ class TrackEventUseCase(
      */
     data class Input(
         val event: AnalyticsEvent,
-        val providerKey: String? = null
+        val providerKey: String? = null,
     ) : UseCaseInput
 
     /**
@@ -30,8 +29,9 @@ class TrackEventUseCase(
      * @param input The input containing the event to be tracked and the optional provider key.
      * @return A [Flow] emitting [NoneOutput] once the event has been passed to the repository.
      */
-    override fun invoke(input: Input): Flow<NoneOutput> = flow {
-        repository.track(input.event, input.providerKey)
-        emit(NoneOutput)
-    }.flowOn(Dispatchers.IO)
+    override fun invoke(input: Input): Flow<NoneOutput> =
+        flow {
+            repository.track(input.event, input.providerKey)
+            emit(NoneOutput)
+        }.flowOn(Dispatchers.IO)
 }

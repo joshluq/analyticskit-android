@@ -11,15 +11,17 @@ import es.joshluq.analyticskit.domain.repository.AnalyticsRepository
  * @property dataSource The data source for managing analytics providers.
  */
 class AnalyticsRepositoryImpl(
-    private val dataSource: AnalyticsDataSource
+    private val dataSource: AnalyticsDataSource,
 ) : AnalyticsRepository {
-
     /**
      * Tracks an analytics event by dispatching it to the data source.
      * @param event The event to be tracked.
      * @param providerKey The key of the provider to send the event to (optional).
      */
-    override suspend fun track(event: AnalyticsEvent, providerKey: String?) {
+    override suspend fun track(
+        event: AnalyticsEvent,
+        providerKey: String?,
+    ) {
         dataSource.sendEvent(event, providerKey)
     }
 

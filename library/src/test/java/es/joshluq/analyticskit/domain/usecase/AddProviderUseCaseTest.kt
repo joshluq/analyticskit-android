@@ -11,22 +11,22 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class AddProviderUseCaseTest {
-
     private val repository: AnalyticsRepository = mockk()
     private val useCase = AddProviderUseCase(repository)
 
     @Test
-    fun `when use case is invoked then add provider in repository`() = runTest {
-        // Given
-        val provider: AnalyticsProvider = mockk()
-        val input = AddProviderUseCase.Input(provider)
-        every { repository.addProvider(provider) } returns Unit
+    fun `when use case is invoked then add provider in repository`() =
+        runTest {
+            // Given
+            val provider: AnalyticsProvider = mockk()
+            val input = AddProviderUseCase.Input(provider)
+            every { repository.addProvider(provider) } returns Unit
 
-        // When
-        val result = useCase(input).toList()
+            // When
+            val result = useCase(input).toList()
 
-        // Then
-        verify(exactly = 1) { repository.addProvider(provider) }
-        assertEquals(listOf(NoneOutput), result)
-    }
+            // Then
+            verify(exactly = 1) { repository.addProvider(provider) }
+            assertEquals(listOf(NoneOutput), result)
+        }
 }

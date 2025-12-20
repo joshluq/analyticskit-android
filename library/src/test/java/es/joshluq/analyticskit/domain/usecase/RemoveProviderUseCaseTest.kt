@@ -10,22 +10,22 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class RemoveProviderUseCaseTest {
-
     private val repository: AnalyticsRepository = mockk()
     private val useCase = RemoveProviderUseCase(repository)
 
     @Test
-    fun `when use case is invoked then remove provider in repository`() = runTest {
-        // Given
-        val key = "test_provider_key"
-        val input = RemoveProviderUseCase.Input(key)
-        every { repository.removeProvider(key) } returns Unit
+    fun `when use case is invoked then remove provider in repository`() =
+        runTest {
+            // Given
+            val key = "test_provider_key"
+            val input = RemoveProviderUseCase.Input(key)
+            every { repository.removeProvider(key) } returns Unit
 
-        // When
-        val result = useCase(input).toList()
+            // When
+            val result = useCase(input).toList()
 
-        // Then
-        verify(exactly = 1) { repository.removeProvider(key) }
-        assertEquals(listOf(NoneOutput), result)
-    }
+            // Then
+            verify(exactly = 1) { repository.removeProvider(key) }
+            assertEquals(listOf(NoneOutput), result)
+        }
 }

@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        
+
         // Track screen view on start
         analyticskitManager.track(AnalyticsEvent.ScreenView("MainScreen", "MainActivity"))
 
@@ -90,7 +90,7 @@ fun AnalyticsShowcaseScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Analyticskit Showcase", style = MaterialTheme.typography.headlineMedium)
-        
+
         Spacer(modifier = Modifier.height(24.dp))
 
         // Provider Toggle Section
@@ -110,7 +110,7 @@ fun AnalyticsShowcaseScreen(
         }
 
         HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-        
+
         Text(text = "Event Tracking", style = MaterialTheme.typography.titleMedium)
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -120,9 +120,9 @@ fun AnalyticsShowcaseScreen(
         ) {
             Text("Track Custom Event")
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         Row(modifier = Modifier.fillMaxWidth()) {
             Button(
                 onClick = { onTrackFunnel("step_1") },

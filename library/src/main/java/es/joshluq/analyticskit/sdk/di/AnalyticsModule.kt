@@ -18,32 +18,23 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AnalyticsModule {
-
     @Provides
     @Singleton
     fun provideAnalyticsDataSource(): AnalyticsDataSource = AnalyticsDataSource()
 
     @Provides
     @Singleton
-    fun provideAnalyticsRepository(
-        dataSource: AnalyticsDataSource
-    ): AnalyticsRepository = AnalyticsRepositoryImpl(dataSource)
+    fun provideAnalyticsRepository(dataSource: AnalyticsDataSource): AnalyticsRepository = AnalyticsRepositoryImpl(dataSource)
 
     @Provides
     @Singleton
-    fun provideTrackEventUseCase(
-        repository: AnalyticsRepository
-    ): TrackEventUseCase = TrackEventUseCase(repository)
+    fun provideTrackEventUseCase(repository: AnalyticsRepository): TrackEventUseCase = TrackEventUseCase(repository)
 
     @Provides
     @Singleton
-    fun provideAddProviderUseCase(
-        repository: AnalyticsRepository
-    ): AddProviderUseCase = AddProviderUseCase(repository)
+    fun provideAddProviderUseCase(repository: AnalyticsRepository): AddProviderUseCase = AddProviderUseCase(repository)
 
     @Provides
     @Singleton
-    fun provideRemoveProviderUseCase(
-        repository: AnalyticsRepository
-    ): RemoveProviderUseCase = RemoveProviderUseCase(repository)
+    fun provideRemoveProviderUseCase(repository: AnalyticsRepository): RemoveProviderUseCase = RemoveProviderUseCase(repository)
 }

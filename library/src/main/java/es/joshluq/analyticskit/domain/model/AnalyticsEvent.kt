@@ -9,14 +9,20 @@ sealed class AnalyticsEvent {
      * @property name The name of the event.
      * @property properties A map of metadata associated with the event.
      */
-    data class Custom(val name: String, val properties: Map<String, Any> = emptyMap()) : AnalyticsEvent()
+    data class Custom(
+        val name: String,
+        val properties: Map<String, Any> = emptyMap(),
+    ) : AnalyticsEvent()
 
     /**
      * Represents a screen navigation event.
      * @property screenName The name of the screen being visited.
      * @property screenClass The class name of the screen (optional).
      */
-    data class ScreenView(val screenName: String, val screenClass: String? = null) : AnalyticsEvent()
+    data class ScreenView(
+        val screenName: String,
+        val screenClass: String? = null,
+    ) : AnalyticsEvent()
 
     /**
      * Represents a conversion funnel step.
@@ -27,6 +33,6 @@ sealed class AnalyticsEvent {
     data class FunnelStep(
         val funnelName: String,
         val stepName: String,
-        val properties: Map<String, Any> = emptyMap()
+        val properties: Map<String, Any> = emptyMap(),
     ) : AnalyticsEvent()
 }

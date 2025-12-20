@@ -12,16 +12,15 @@ import javax.inject.Inject
  */
 @HiltAndroidApp
 class ShowcaseApp : Application() {
-
     @Inject
     lateinit var analyticskitManager: AnalyticskitManager
 
     override fun onCreate() {
         super.onCreate()
-        
+
         // Registering a simple console provider for demonstration
         analyticskitManager.addProvider(ConsoleAnalyticsProvider())
-        
+
         // Track an initial app open event
         analyticskitManager.track(AnalyticsEvent.Custom("app_open"))
     }

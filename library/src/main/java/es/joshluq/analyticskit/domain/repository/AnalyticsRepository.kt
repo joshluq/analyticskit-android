@@ -12,7 +12,10 @@ interface AnalyticsRepository {
      * @param event The event to be tracked.
      * @param providerKey The key of the provider to send the event to (optional).
      */
-    suspend fun track(event: AnalyticsEvent, providerKey: String? = null)
+    suspend fun track(
+        event: AnalyticsEvent,
+        providerKey: String? = null,
+    )
 
     /**
      * Adds an analytics provider.

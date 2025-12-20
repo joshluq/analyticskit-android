@@ -21,23 +21,23 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AnalyticskitManagerTest {
-
     private val trackEventUseCase: TrackEventUseCase = mockk()
     private val addProviderUseCase: AddProviderUseCase = mockk()
     private val removeProviderUseCase: RemoveProviderUseCase = mockk()
-    
+
     private val testDispatcher = UnconfinedTestDispatcher()
-    
+
     private lateinit var manager: AnalyticskitManager
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        manager = AnalyticskitManager(
-            trackEventUseCase,
-            addProviderUseCase,
-            removeProviderUseCase
-        )
+        manager =
+            AnalyticskitManager(
+                trackEventUseCase,
+                addProviderUseCase,
+                removeProviderUseCase,
+            )
     }
 
     @After
