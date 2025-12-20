@@ -7,12 +7,11 @@ Analyticskit is a modular tool built for data collection and user behavior analy
 ## 🚀 Key Features
 
 - **Multi-Provider Support**: Route data to multiple analytics consumers (Firebase, Mixpanel, etc.) simultaneously.
-- **Rich Event Tracking**: Track custom events with detailed metadata.
-- **Navigation Monitoring**: Automatic or manual tracking of screen views and user flow.
-- **Conversion Funnels**: Specialized tracking for business-critical user journeys.
-- **Clean Architecture**: Decoupled business logic from specific provider implementations.
-- **Hilt Ready**: Full support for Dependency Injection for easy integration.
-- **Agnostic & Lightweight**: Zero required third-party dependencies in the core library.
+- **Dynamic Management**: Add or remove providers at runtime based on user preferences or app state.
+- **Rich Event Tracking**: Track custom events, screen views, and conversion funnels with type-safe models.
+- **Clean Architecture**: Strict separation of concerns with a UseCase-driven approach.
+- **Hilt Ready**: Seamless dependency injection for Android applications.
+- **High Performance**: Optimized for low overhead using structured concurrency and thread-safe collections.
 
 ## 🏗 Architecture
 
@@ -25,7 +24,7 @@ graph TD
     end
 
     subgraph "Domain Layer"
-        UC[TrackEventUseCase]
+        UC[UseCases: Track, Add, Remove]
         R[AnalyticsRepository Interface]
         MOD[AnalyticsEvent Sealed Class]
     end
@@ -53,49 +52,51 @@ graph TD
 ## 🛠 Usage Example
 
 ### 1. Implement a Provider
-Create a bridge between Analyticskit and your preferred service.
+Create a bridge between Analyticskit and your preferred service by implementing `AnalyticsProvider`.
 
 ```kotlin
 class ConsoleAnalyticsProvider : AnalyticsProvider {
-    override val key: String = "CONSOLE"
+    override val key: String = "CONSOLE_PROVIDER"
 
     override suspend fun track(event: AnalyticsEvent) {
         when (event) {
             is AnalyticsEvent.Custom -> println("Event: ${event.name}")
             is AnalyticsEvent.ScreenView -> println("Screen: ${event.screenName}")
-            is AnalyticsEvent.FunnelStep -> println("Funnel: ${event.funnelName} Step: ${event.stepName}")
+            is AnalyticsEvent.FunnelStep -> println("Funnel: ${event.funnelName}")
         }
     }
 }
 ```
 
-### 2. Initialize and Inject
-Add your providers to the `AnalyticskitManager` (usually in your `Application` class).
+### 2. Initialize and Manage Providers
+Inyect `AnalyticskitManager` and manage your providers dynamically.
 
 ```kotlin
 @HiltAndroidApp
-class MyAwesomeApp : Application() {
+class MyApp : Application() {
     @Inject lateinit var analyticskitManager: AnalyticskitManager
 
     override fun onCreate() {
         super.onCreate()
+        // Add provider
         analyticskitManager.addProvider(ConsoleAnalyticsProvider())
     }
 }
 ```
 
 ### 3. Track Events
-Use the manager to record data from anywhere in your app.
+Track data from any part of your application.
 
 ```kotlin
-// Track a custom event
+// Track a custom event globally
 analyticskitManager.track(
-    AnalyticsEvent.Custom("purchase_completed", mapOf("amount" to 99.99))
+    AnalyticsEvent.Custom("purchase_completed", mapOf("price" to 19.99))
 )
 
-// Track screen navigation
+// Target a specific provider
 analyticskitManager.track(
-    AnalyticsEvent.ScreenView("CheckoutScreen")
+    event = AnalyticsEvent.Custom("debug_event"),
+    providerKey = "CONSOLE_PROVIDER"
 )
 ```
 
@@ -103,15 +104,15 @@ analyticskitManager.track(
 
 - `:analyticskit`: The core library module.
     - `sdk`: Public API (`AnalyticskitManager`).
-    - `domain`: Business logic, Repository interfaces, and `AnalyticsEvent` models.
-    - `data`: Repository implementation, DataSources, and Provider abstractions.
-- `:showcase`: A sample app demonstrating integration, Hilt usage, and provider implementation.
+    - `domain`: Business logic, `UseCase` interfaces, and `AnalyticsEvent` models.
+    - `data`: Repository implementation, thread-safe `DataSource`, and `Provider` abstractions.
+- `:showcase`: A sample app demonstrating dynamic provider toggling and event tracking.
 
 ## 🧪 Quality Assurance
 
 - **KDocs**: 100% API documentation for public members.
-- **Unit Testing**: High logic coverage using **JUnit**, **MockK**, and **Coroutines Test**.
-- **Performance**: Thread-safe provider management and low-overhead event dispatching.
+- **Unit Testing**: 100% logic coverage using **JUnit 4**, **MockK**, and **Coroutines Test**.
+- **Performance**: Thread-safe provider management using `CopyOnWriteArrayList` and optimized `flowOn(Dispatchers.IO)`.
 
 ---
 
