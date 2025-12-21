@@ -32,12 +32,7 @@ class AnalyticskitManagerTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        manager =
-            AnalyticskitManager(
-                trackEventUseCase,
-                addProviderUseCase,
-                removeProviderUseCase,
-            )
+        manager = AnalyticskitManager(trackEventUseCase, addProviderUseCase, removeProviderUseCase)
     }
 
     @After

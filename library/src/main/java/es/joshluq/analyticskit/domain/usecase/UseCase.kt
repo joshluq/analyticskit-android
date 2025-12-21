@@ -2,14 +2,10 @@ package es.joshluq.analyticskit.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 
-/**
- * Base interface for all use case inputs.
- */
+/** Base interface for all use case inputs. */
 interface UseCaseInput
 
-/**
- * Base interface for all use case outputs.
- */
+/** Base interface for all use case outputs. */
 interface UseCaseOutput
 
 /**
@@ -28,7 +24,5 @@ interface UseCase<in I : UseCaseInput, out O : UseCaseOutput> {
     operator fun invoke(input: I): Flow<O>
 }
 
-/**
- * Represents a standard empty output for Use Cases that do not return a specific value.
- */
+/** Represents a standard empty output for Use Cases that do not return a specific value. */
 object NoneOutput : UseCaseOutput

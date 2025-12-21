@@ -7,14 +7,10 @@ import dagger.hilt.components.SingletonComponent
 import es.joshluq.analyticskit.data.repository.AnalyticsRepositoryImpl
 import es.joshluq.analyticskit.domain.repository.AnalyticsRepository
 
-/**
- * Hilt module for providing dependencies related to the Analyticskit library.
- */
+/** Hilt module for providing dependencies related to the Analyticskit library. */
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class AnalyticsModule {
     @Binds
-    abstract fun bindAnalyticsRepository(
-        analyticsRepositoryImpl: AnalyticsRepositoryImpl,
-    ): AnalyticsRepository
+    abstract fun bindAnalyticsRepository(analyticsRepositoryImpl: AnalyticsRepositoryImpl): AnalyticsRepository
 }

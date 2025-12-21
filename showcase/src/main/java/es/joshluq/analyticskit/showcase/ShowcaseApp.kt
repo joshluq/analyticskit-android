@@ -7,13 +7,10 @@ import es.joshluq.analyticskit.domain.model.AnalyticsEvent
 import es.joshluq.analyticskit.sdk.AnalyticskitManager
 import javax.inject.Inject
 
-/**
- * Custom Application class for the showcase app, initialized with Hilt.
- */
+/** Custom Application class for the showcase app, initialized with Hilt. */
 @HiltAndroidApp
 class ShowcaseApp : Application() {
-    @Inject
-    lateinit var analyticskitManager: AnalyticskitManager
+    @Inject lateinit var analyticskitManager: AnalyticskitManager
 
     override fun onCreate() {
         super.onCreate()
@@ -26,9 +23,7 @@ class ShowcaseApp : Application() {
     }
 }
 
-/**
- * A simple implementation of [AnalyticsProvider] that logs to the console.
- */
+/** A simple implementation of [AnalyticsProvider] that logs to the console. */
 class ConsoleAnalyticsProvider : AnalyticsProvider {
     override val key: String = "CONSOLE_PROVIDER"
 
@@ -41,7 +36,9 @@ class ConsoleAnalyticsProvider : AnalyticsProvider {
                 println("Showcase - [Screen View] Screen: ${event.screenName}, Class: ${event.screenClass}")
             }
             is AnalyticsEvent.FunnelStep -> {
-                println("Showcase - [Funnel Step] Funnel: ${event.funnelName}, Step: ${event.stepName}, Properties: ${event.properties}")
+                println(
+                    "Showcase - [Funnel Step] Funnel: ${event.funnelName}, Step: ${event.stepName}, Properties: ${event.properties}",
+                )
             }
         }
     }
