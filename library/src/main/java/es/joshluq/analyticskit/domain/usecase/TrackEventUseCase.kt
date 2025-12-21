@@ -6,12 +6,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import javax.inject.Inject
 
 /**
  * Use case for tracking an analytics event.
  * @property repository The repository to handle the event tracking.
  */
-class TrackEventUseCase(
+class TrackEventUseCase @Inject constructor(
     private val repository: AnalyticsRepository,
 ) : UseCase<TrackEventUseCase.Input, NoneOutput> {
     /**

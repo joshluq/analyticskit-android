@@ -17,9 +17,7 @@ import javax.inject.Singleton
  * This manager coordinates event tracking and provider management using UseCases.
  */
 @Singleton
-class AnalyticskitManager
-@Inject
-constructor(
+class AnalyticskitManager @Inject constructor(
     private val trackEventUseCase: TrackEventUseCase,
     private val addProviderUseCase: AddProviderUseCase,
     private val removeProviderUseCase: RemoveProviderUseCase,

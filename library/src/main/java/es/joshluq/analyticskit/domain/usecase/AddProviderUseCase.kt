@@ -4,12 +4,13 @@ import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.domain.repository.AnalyticsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 /**
  * Use case for adding an analytics provider.
  * @property repository The repository to handle the provider management.
  */
-class AddProviderUseCase(
+class AddProviderUseCase @Inject constructor(
     private val repository: AnalyticsRepository,
 ) : UseCase<AddProviderUseCase.Input, NoneOutput> {
     /**

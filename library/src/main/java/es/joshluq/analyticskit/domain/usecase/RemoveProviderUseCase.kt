@@ -3,12 +3,13 @@ package es.joshluq.analyticskit.domain.usecase
 import es.joshluq.analyticskit.domain.repository.AnalyticsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
 /**
  * Use case for removing an analytics provider.
  * @property repository The repository to handle the provider management.
  */
-class RemoveProviderUseCase(
+class RemoveProviderUseCase @Inject constructor(
     private val repository: AnalyticsRepository,
 ) : UseCase<RemoveProviderUseCase.Input, NoneOutput> {
     /**
