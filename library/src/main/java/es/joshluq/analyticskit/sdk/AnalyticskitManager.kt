@@ -17,43 +17,41 @@ import javax.inject.Singleton
  * provider management using UseCases.
  */
 @Singleton
-class AnalyticskitManager
-    @Inject
-    constructor(
-        private val trackEventUseCase: TrackEventUseCase,
-        private val addProviderUseCase: AddProviderUseCase,
-        private val removeProviderUseCase: RemoveProviderUseCase,
+class AnalyticskitManager @Inject constructor(
+    private val trackEventUseCase: TrackEventUseCase,
+    private val addProviderUseCase: AddProviderUseCase,
+    private val removeProviderUseCase: RemoveProviderUseCase,
+) {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
+    /**
+     * Tracks an analytics event.
+     *
+     * @param event The event to be tracked.
+     * @param providerKey The key of the provider to send the event to (optional).
+     */
+    fun track(
+        event: AnalyticsEvent,
+        providerKey: String? = null,
     ) {
-        private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-
-        /**
-         * Tracks an analytics event.
-         *
-         * @param event The event to be tracked.
-         * @param providerKey The key of the provider to send the event to (optional).
-         */
-        fun track(
-            event: AnalyticsEvent,
-            providerKey: String? = null,
-        ) {
-            trackEventUseCase(TrackEventUseCase.Input(event, providerKey)).launchIn(scope)
-        }
-
-        /**
-         * Adds a new analytics provider.
-         *
-         * @param provider The provider to be added.
-         */
-        fun addProvider(provider: AnalyticsProvider) {
-            addProviderUseCase(AddProviderUseCase.Input(provider)).launchIn(scope)
-        }
-
-        /**
-         * Removes an analytics provider.
-         *
-         * @param key The key of the provider to be removed.
-         */
-        fun removeProvider(key: String) {
-            removeProviderUseCase(RemoveProviderUseCase.Input(key)).launchIn(scope)
-        }
+        trackEventUseCase(TrackEventUseCase.Input(event, providerKey)).launchIn(scope)
     }
+
+    /**
+     * Adds a new analytics provider.
+     *
+     * @param provider The provider to be added.
+     */
+    fun addProvider(provider: AnalyticsProvider) {
+        addProviderUseCase(AddProviderUseCase.Input(provider)).launchIn(scope)
+    }
+
+    /**
+     * Removes an analytics provider.
+     *
+     * @param key The key of the provider to be removed.
+     */
+    fun removeProvider(key: String) {
+        removeProviderUseCase(RemoveProviderUseCase.Input(key)).launchIn(scope)
+    }
+}
