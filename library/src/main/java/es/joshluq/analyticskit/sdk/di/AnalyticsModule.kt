@@ -24,7 +24,9 @@ object AnalyticsModule {
 
     @Provides
     @Singleton
-    fun provideAnalyticsRepository(dataSource: AnalyticsDataSource): AnalyticsRepository = AnalyticsRepositoryImpl(dataSource)
+    fun provideAnalyticsRepository(
+        dataSource: AnalyticsDataSource
+    ): AnalyticsRepository = AnalyticsRepositoryImpl(dataSource)
 
     @Provides
     @Singleton
@@ -36,5 +38,7 @@ object AnalyticsModule {
 
     @Provides
     @Singleton
-    fun provideRemoveProviderUseCase(repository: AnalyticsRepository): RemoveProviderUseCase = RemoveProviderUseCase(repository)
+    fun provideRemoveProviderUseCase(
+        repository: AnalyticsRepository
+    ): RemoveProviderUseCase = RemoveProviderUseCase(repository)
 }
