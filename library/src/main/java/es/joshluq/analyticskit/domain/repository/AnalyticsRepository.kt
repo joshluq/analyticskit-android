@@ -46,4 +46,32 @@ internal interface AnalyticsRepository {
      * @param providerKey The key of the provider (optional).
      */
     fun removeGlobalProperty(propertyKey: String, providerKey: String? = null)
+
+    /**
+     * Accumulates properties for a specific event trace.
+     *
+     * @param eventName The key identifying the trace (usually the final event name).
+     * @param properties The properties to add to the trace.
+     */
+    fun traceEvent(eventName: String, properties: Map<String, Any>)
+
+    /**
+     * Tracks a traced event with all accumulated properties and clears the trace.
+     *
+     * @param eventName The key identifying the trace.
+     * @param providerKey The key of the provider (optional).
+     */
+    suspend fun trackTracedEvent(eventName: String, providerKey: String? = null)
+
+    /**
+     * Clears an event trace without tracking it.
+     *
+     * @param eventName The key identifying the trace.
+     */
+    fun clearTrace(eventName: String)
+
+    /**
+     * Clears all accumulated event traces.
+     */
+    fun clearAllTraces()
 }

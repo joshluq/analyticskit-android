@@ -26,7 +26,7 @@ internal class AddProviderUseCase(
      * @param input The input containing the provider to be added.
      * @return A [Result] containing [NoneOutput] once the provider has been added.
      */
-    override fun invoke(input: Input): Result<NoneOutput> =
+    override suspend fun invoke(input: Input): Result<NoneOutput> =
         runCatching {
             repository.addProvider(input.provider)
             NoneOutput

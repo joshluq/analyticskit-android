@@ -65,4 +65,40 @@ internal class AnalyticsRepositoryImpl(
     override fun removeGlobalProperty(propertyKey: String, providerKey: String?) {
         dataSource.removeGlobalProperty(propertyKey, providerKey)
     }
+
+    /**
+     * Accumulates properties for a specific event trace.
+     *
+     * @param eventName The key identifying the trace (usually the final event name).
+     * @param properties The properties to add to the trace.
+     */
+    override fun traceEvent(eventName: String, properties: Map<String, Any>) {
+        dataSource.traceEvent(eventName, properties)
+    }
+
+    /**
+     * Tracks a traced event with all accumulated properties and clears the trace.
+     *
+     * @param eventName The key identifying the trace.
+     * @param providerKey The key of the provider (optional).
+     */
+    override suspend fun trackTracedEvent(eventName: String, providerKey: String?) {
+        dataSource.trackTracedEvent(eventName, providerKey)
+    }
+
+    /**
+     * Clears an event trace without tracking it.
+     *
+     * @param eventName The key identifying the trace.
+     */
+    override fun clearTrace(eventName: String) {
+        dataSource.clearTrace(eventName)
+    }
+
+    /**
+     * Clears all accumulated event traces.
+     */
+    override fun clearAllTraces() {
+        dataSource.clearAllTraces()
+    }
 }

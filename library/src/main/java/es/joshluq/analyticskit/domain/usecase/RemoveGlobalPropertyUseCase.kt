@@ -27,7 +27,7 @@ internal class RemoveGlobalPropertyUseCase(
      * @param input The input containing the property key.
      * @return A [Result] containing [NoneOutput] once the property has been removed.
      */
-    override fun invoke(input: Input): Result<NoneOutput> =
+    override suspend fun invoke(input: Input): Result<NoneOutput> =
         runCatching {
             repository.removeGlobalProperty(input.propertyKey, input.providerKey)
             NoneOutput

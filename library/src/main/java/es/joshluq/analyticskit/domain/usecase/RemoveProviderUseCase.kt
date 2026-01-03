@@ -25,7 +25,7 @@ internal class RemoveProviderUseCase(
      * @param input The input containing the key of the provider to be removed.
      * @return A [Result] containing [NoneOutput] once the provider has been removed.
      */
-    override fun invoke(input: Input): Result<NoneOutput> =
+    override suspend fun invoke(input: Input): Result<NoneOutput> =
         runCatching {
             repository.removeProvider(input.key)
             NoneOutput

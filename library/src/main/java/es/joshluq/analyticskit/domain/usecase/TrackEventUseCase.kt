@@ -28,7 +28,7 @@ internal class TrackEventUseCase(
      * @param input The input containing the event to be tracked and the optional provider key.
      * @return A [Result] containing [NoneOutput] once the event has been passed to the repository.
      */
-    override fun invoke(input: Input): Result<NoneOutput> =
+    override suspend fun invoke(input: Input): Result<NoneOutput> =
         runCatching {
             repository.track(input.event, input.providerKey)
             NoneOutput

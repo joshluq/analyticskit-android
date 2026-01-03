@@ -29,7 +29,7 @@ internal class AddGlobalPropertyUseCase(
      * @param input The input containing the property details.
      * @return A [Result] containing [NoneOutput] once the property has been added.
      */
-    override fun invoke(input: Input): Result<NoneOutput> =
+    override suspend fun invoke(input: Input): Result<NoneOutput> =
         runCatching {
             repository.addGlobalProperty(input.key, input.value, input.providerKey)
             NoneOutput

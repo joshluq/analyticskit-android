@@ -1,5 +1,6 @@
 package es.joshluq.analyticskit.sdk
 
+import android.util.Log
 import es.joshluq.analyticskit.data.datasource.AnalyticsDataSource
 import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.data.repository.AnalyticsRepositoryImpl
@@ -8,7 +9,13 @@ import es.joshluq.analyticskit.domain.usecase.AddGlobalPropertyUseCase
 import es.joshluq.analyticskit.domain.usecase.AddProviderUseCase
 import es.joshluq.analyticskit.domain.usecase.RemoveGlobalPropertyUseCase
 import es.joshluq.analyticskit.domain.usecase.RemoveProviderUseCase
+import es.joshluq.analyticskit.domain.usecase.TraceEventUseCase
 import es.joshluq.analyticskit.domain.usecase.TrackEventUseCase
+import es.joshluq.analyticskit.domain.usecase.TrackTracedEventUseCase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 /**
  * Main entry point for the Analyticskit library. This manager coordinates event tracking and
@@ -22,7 +29,11 @@ class AnalyticskitManager private constructor(
     private val removeProviderUseCase: RemoveProviderUseCase,
     private val addGlobalPropertyUseCase: AddGlobalPropertyUseCase,
     private val removeGlobalPropertyUseCase: RemoveGlobalPropertyUseCase,
+    private val traceEventUseCase: TraceEventUseCase,
+    private val trackTracedEventUseCase: TrackTracedEventUseCase,
 ) {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
     /**
      * Tracks an analytics event.
      *
@@ -33,7 +44,10 @@ class AnalyticskitManager private constructor(
         event: AnalyticsEvent,
         providerKey: String? = null,
     ) {
-        trackEventUseCase(TrackEventUseCase.Input(event, providerKey))
+        scope.launch {
+            trackEventUseCase(TrackEventUseCase.Input(event, providerKey))
+                .onFailure { Log.e(TAG, "Error tracking event: ${it.message}", it) }
+        }
     }
 
     /**
@@ -42,7 +56,10 @@ class AnalyticskitManager private constructor(
      * @param provider The provider to be added.
      */
     fun addProvider(provider: AnalyticsProvider) {
-        addProviderUseCase(AddProviderUseCase.Input(provider))
+        scope.launch {
+            addProviderUseCase(AddProviderUseCase.Input(provider))
+                .onFailure { Log.e(TAG, "Error adding provider: ${it.message}", it) }
+        }
     }
 
     /**
@@ -51,7 +68,10 @@ class AnalyticskitManager private constructor(
      * @param key The key of the provider to be removed.
      */
     fun removeProvider(key: String) {
-        removeProviderUseCase(RemoveProviderUseCase.Input(key))
+        scope.launch {
+            removeProviderUseCase(RemoveProviderUseCase.Input(key))
+                .onFailure { Log.e(TAG, "Error removing provider: ${it.message}", it) }
+        }
     }
 
     /**
@@ -62,7 +82,10 @@ class AnalyticskitManager private constructor(
      * @param providerKey The key of the specific provider (optional).
      */
     fun addGlobalProperty(key: String, value: Any, providerKey: String? = null) {
-        addGlobalPropertyUseCase(AddGlobalPropertyUseCase.Input(key, value, providerKey))
+        scope.launch {
+            addGlobalPropertyUseCase(AddGlobalPropertyUseCase.Input(key, value, providerKey))
+                .onFailure { Log.e(TAG, "Error adding global property: ${it.message}", it) }
+        }
     }
 
     /**
@@ -72,7 +95,37 @@ class AnalyticskitManager private constructor(
      * @param providerKey The key of the specific provider (optional).
      */
     fun removeGlobalProperty(propertyKey: String, providerKey: String? = null) {
-        removeGlobalPropertyUseCase(RemoveGlobalPropertyUseCase.Input(propertyKey, providerKey))
+        scope.launch {
+            removeGlobalPropertyUseCase(RemoveGlobalPropertyUseCase.Input(propertyKey, providerKey))
+                .onFailure { Log.e(TAG, "Error removing global property: ${it.message}", it) }
+        }
+    }
+
+    /**
+     * Accumulates properties for a specific event trace. This is useful for grouping information
+     * from different screens before sending a final event.
+     *
+     * @param eventName The key identifying the trace (usually the final event name).
+     * @param properties The properties to add to the trace.
+     */
+    fun traceEvent(eventName: String, properties: Map<String, Any>) {
+        scope.launch {
+            traceEventUseCase(TraceEventUseCase.Input(eventName, properties))
+                .onFailure { Log.e(TAG, "Error tracing event: ${it.message}", it) }
+        }
+    }
+
+    /**
+     * Tracks a traced event with all accumulated properties and clears the trace.
+     *
+     * @param eventName The key identifying the trace.
+     * @param providerKey The key of the provider to send the event to (optional).
+     */
+    fun trackTracedEvent(eventName: String, providerKey: String? = null) {
+        scope.launch {
+            trackTracedEventUseCase(TrackTracedEventUseCase.Input(eventName, providerKey))
+                .onFailure { Log.e(TAG, "Error tracking traced event: ${it.message}", it) }
+        }
     }
 
     /**
@@ -108,7 +161,13 @@ class AnalyticskitManager private constructor(
                 removeProviderUseCase = RemoveProviderUseCase(repository),
                 addGlobalPropertyUseCase = AddGlobalPropertyUseCase(repository),
                 removeGlobalPropertyUseCase = RemoveGlobalPropertyUseCase(repository),
+                traceEventUseCase = TraceEventUseCase(repository),
+                trackTracedEventUseCase = TrackTracedEventUseCase(repository),
             )
         }
+    }
+
+    companion object {
+        private const val TAG = "AnalyticskitManager"
     }
 }
