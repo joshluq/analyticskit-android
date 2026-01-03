@@ -42,6 +42,27 @@ internal class AnalyticsDataSource {
     }
 
     /**
+     * Adds a global property to a specific provider or to all providers if no key is specified.
+     *
+     * @param key The key of the property.
+     * @param value The value of the property.
+     * @param providerKey The key of the provider (optional).
+     */
+    fun addGlobalProperty(key: String, value: Any, providerKey: String? = null) {
+        getProviders(providerKey).forEach { it.addGlobalProperty(key, value) }
+    }
+
+    /**
+     * Removes a global property from a specific provider or from all providers if no key is specified.
+     *
+     * @param propertyKey The key of the property to be removed.
+     * @param providerKey The key of the provider (optional).
+     */
+    fun removeGlobalProperty(propertyKey: String, providerKey: String? = null) {
+        getProviders(providerKey).forEach { it.removeGlobalProperty(propertyKey) }
+    }
+
+    /**
      * Filters the providers based on the key. If a key is provided, only the matching provider is
      * returned. If no key is provided, all providers are returned (default behavior).
      */

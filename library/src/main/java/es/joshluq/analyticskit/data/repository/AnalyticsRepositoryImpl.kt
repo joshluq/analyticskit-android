@@ -44,4 +44,25 @@ internal class AnalyticsRepositoryImpl(
     override fun removeProvider(key: String) {
         dataSource.removeProvider(key)
     }
+
+    /**
+     * Adds a global property to a specific provider or to all providers if no key is specified.
+     *
+     * @param key The key of the property.
+     * @param value The value of the property.
+     * @param providerKey The key of the provider (optional).
+     */
+    override fun addGlobalProperty(key: String, value: Any, providerKey: String?) {
+        dataSource.addGlobalProperty(key, value, providerKey)
+    }
+
+    /**
+     * Removes a global property from a specific provider or from all providers if no key is specified.
+     *
+     * @param propertyKey The key of the property to be removed.
+     * @param providerKey The key of the provider (optional).
+     */
+    override fun removeGlobalProperty(propertyKey: String, providerKey: String?) {
+        dataSource.removeGlobalProperty(propertyKey, providerKey)
+    }
 }

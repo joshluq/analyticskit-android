@@ -16,4 +16,19 @@ interface AnalyticsProvider {
      * @param event The event to be tracked.
      */
     suspend fun track(event: AnalyticsEvent)
+
+    /**
+     * Adds a global property to the provider. These properties are usually sent with every event.
+     *
+     * @param key The key of the property.
+     * @param value The value of the property.
+     */
+    fun addGlobalProperty(key: String, value: Any)
+
+    /**
+     * Removes a global property from the provider.
+     *
+     * @param key The key of the property to be removed.
+     */
+    fun removeGlobalProperty(key: String)
 }

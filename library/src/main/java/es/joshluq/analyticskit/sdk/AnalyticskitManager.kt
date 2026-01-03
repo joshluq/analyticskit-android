@@ -4,7 +4,9 @@ import es.joshluq.analyticskit.data.datasource.AnalyticsDataSource
 import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.data.repository.AnalyticsRepositoryImpl
 import es.joshluq.analyticskit.domain.model.AnalyticsEvent
+import es.joshluq.analyticskit.domain.usecase.AddGlobalPropertyUseCase
 import es.joshluq.analyticskit.domain.usecase.AddProviderUseCase
+import es.joshluq.analyticskit.domain.usecase.RemoveGlobalPropertyUseCase
 import es.joshluq.analyticskit.domain.usecase.RemoveProviderUseCase
 import es.joshluq.analyticskit.domain.usecase.TrackEventUseCase
 
@@ -18,6 +20,8 @@ class AnalyticskitManager private constructor(
     private val trackEventUseCase: TrackEventUseCase,
     private val addProviderUseCase: AddProviderUseCase,
     private val removeProviderUseCase: RemoveProviderUseCase,
+    private val addGlobalPropertyUseCase: AddGlobalPropertyUseCase,
+    private val removeGlobalPropertyUseCase: RemoveGlobalPropertyUseCase,
 ) {
     /**
      * Tracks an analytics event.
@@ -51,6 +55,27 @@ class AnalyticskitManager private constructor(
     }
 
     /**
+     * Adds a global property to a specific provider or to all providers if no key is specified.
+     *
+     * @param key The key of the property.
+     * @param value The value of the property.
+     * @param providerKey The key of the specific provider (optional).
+     */
+    fun addGlobalProperty(key: String, value: Any, providerKey: String? = null) {
+        addGlobalPropertyUseCase(AddGlobalPropertyUseCase.Input(key, value, providerKey))
+    }
+
+    /**
+     * Removes a global property from a specific provider or from all providers if no key is specified.
+     *
+     * @param propertyKey The key of the property to be removed.
+     * @param providerKey The key of the specific provider (optional).
+     */
+    fun removeGlobalProperty(propertyKey: String, providerKey: String? = null) {
+        removeGlobalPropertyUseCase(RemoveGlobalPropertyUseCase.Input(propertyKey, providerKey))
+    }
+
+    /**
      * Builder class for [AnalyticskitManager].
      */
     class Builder {
@@ -81,6 +106,8 @@ class AnalyticskitManager private constructor(
                 trackEventUseCase = TrackEventUseCase(repository),
                 addProviderUseCase = AddProviderUseCase(repository),
                 removeProviderUseCase = RemoveProviderUseCase(repository),
+                addGlobalPropertyUseCase = AddGlobalPropertyUseCase(repository),
+                removeGlobalPropertyUseCase = RemoveGlobalPropertyUseCase(repository),
             )
         }
     }
