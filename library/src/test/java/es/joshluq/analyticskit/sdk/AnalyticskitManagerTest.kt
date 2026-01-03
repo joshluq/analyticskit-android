@@ -2,13 +2,10 @@ package es.joshluq.analyticskit.sdk
 
 import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.domain.model.AnalyticsEvent
-import es.joshluq.analyticskit.domain.usecase.AddProviderUseCase
-import es.joshluq.analyticskit.domain.usecase.NoneOutput
-import es.joshluq.analyticskit.domain.usecase.RemoveProviderUseCase
-import es.joshluq.analyticskit.domain.usecase.TrackEventUseCase
-import io.mockk.every
+import es.joshluq.analyticskit.domain.usecase.*
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -23,6 +20,10 @@ class AnalyticskitManagerTest {
     private val trackEventUseCase: TrackEventUseCase = mockk()
     private val addProviderUseCase: AddProviderUseCase = mockk()
     private val removeProviderUseCase: RemoveProviderUseCase = mockk()
+    private val addGlobalPropertyUseCase: AddGlobalPropertyUseCase = mockk()
+    private val removeGlobalPropertyUseCase: RemoveGlobalPropertyUseCase = mockk()
+    private val traceEventUseCase: TraceEventUseCase = mockk()
+    private val trackTracedEventUseCase: TrackTracedEventUseCase = mockk()
 
     private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -31,7 +32,18 @@ class AnalyticskitManagerTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        manager = AnalyticskitManager(trackEventUseCase, addProviderUseCase, removeProviderUseCase)
+        // Reflection is used to instantiate the private constructor for testing
+        val constructor = AnalyticskitManager::class.java.declaredConstructors[0]
+        constructor.isAccessible = true
+        manager = constructor.newInstance(
+            trackEventUseCase,
+            addProviderUseCase,
+            removeProviderUseCase,
+            addGlobalPropertyUseCase,
+            removeGlobalPropertyUseCase,
+            traceEventUseCase,
+            trackTracedEventUseCase
+        ) as AnalyticskitManager
     }
 
     @After
@@ -44,13 +56,13 @@ class AnalyticskitManagerTest {
         // Given
         val event = AnalyticsEvent.Custom("test_event")
         val input = TrackEventUseCase.Input(event, null)
-        every { trackEventUseCase(input) } returns Result.success(NoneOutput)
+        coEvery { trackEventUseCase(input) } returns Result.success(NoneOutput)
 
         // When
         manager.track(event)
 
         // Then
-        verify(exactly = 1) { trackEventUseCase(input) }
+        coVerify(exactly = 1) { trackEventUseCase(input) }
     }
 
     @Test
@@ -58,13 +70,13 @@ class AnalyticskitManagerTest {
         // Given
         val provider: AnalyticsProvider = mockk()
         val input = AddProviderUseCase.Input(provider)
-        every { addProviderUseCase(input) } returns Result.success(NoneOutput)
+        coEvery { addProviderUseCase(input) } returns Result.success(NoneOutput)
 
         // When
         manager.addProvider(provider)
 
         // Then
-        verify(exactly = 1) { addProviderUseCase(input) }
+        coVerify(exactly = 1) { addProviderUseCase(input) }
     }
 
     @Test
@@ -72,12 +84,56 @@ class AnalyticskitManagerTest {
         // Given
         val key = "test_key"
         val input = RemoveProviderUseCase.Input(key)
-        every { removeProviderUseCase(input) } returns Result.success(NoneOutput)
+        coEvery { removeProviderUseCase(input) } returns Result.success(NoneOutput)
 
         // When
         manager.removeProvider(key)
 
         // Then
-        verify(exactly = 1) { removeProviderUseCase(input) }
+        coVerify(exactly = 1) { removeProviderUseCase(input) }
+    }
+
+    @Test
+    fun `when addGlobalProperty is called then invoke addGlobalPropertyUseCase`() {
+        // Given
+        val key = "global_key"
+        val value = "global_value"
+        val input = AddGlobalPropertyUseCase.Input(key, value, null)
+        coEvery { addGlobalPropertyUseCase(input) } returns Result.success(NoneOutput)
+
+        // When
+        manager.addGlobalProperty(key, value)
+
+        // Then
+        coVerify(exactly = 1) { addGlobalPropertyUseCase(input) }
+    }
+
+    @Test
+    fun `when traceEvent is called then invoke traceEventUseCase`() {
+        // Given
+        val eventName = "trace_event"
+        val properties = mapOf("key" to "value")
+        val input = TraceEventUseCase.Input(eventName, properties)
+        coEvery { traceEventUseCase(input) } returns Result.success(NoneOutput)
+
+        // When
+        manager.traceEvent(eventName, properties)
+
+        // Then
+        coVerify(exactly = 1) { traceEventUseCase(input) }
+    }
+
+    @Test
+    fun `when trackTracedEvent is called then invoke trackTracedEventUseCase`() {
+        // Given
+        val eventName = "trace_event"
+        val input = TrackTracedEventUseCase.Input(eventName, null)
+        coEvery { trackTracedEventUseCase(input) } returns Result.success(NoneOutput)
+
+        // When
+        manager.trackTracedEvent(eventName)
+
+        // Then
+        coVerify(exactly = 1) { trackTracedEventUseCase(input) }
     }
 }
