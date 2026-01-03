@@ -14,18 +14,44 @@ class AnalyticsRepositoryImplTest {
     private val repository = AnalyticsRepositoryImpl(dataSource)
 
     @Test
-    fun `when track is called then send event to data source`() =
-        runTest {
-            // Given
-            val event = AnalyticsEvent.Custom("test_event")
-            coEvery { dataSource.sendEvent(event, null) } returns Unit
+    fun `when track is called then send event to data source`() = runTest {
+        // Given
+        val event = AnalyticsEvent.Custom("test_event")
+        coEvery { dataSource.sendEvent(event) } returns Unit
 
-            // When
-            repository.track(event, null)
+        // When
+        repository.track(event)
 
-            // Then
-            coVerify(exactly = 1) { dataSource.sendEvent(event, null) }
-        }
+        // Then
+        coVerify(exactly = 1) { dataSource.sendEvent(event) }
+    }
+
+    @Test
+    fun `when track is called then send event to data source with null key`() = runTest {
+        // Given
+        val event = AnalyticsEvent.Custom("test_event")
+        coEvery { dataSource.sendEvent(event, null) } returns Unit
+
+        // When
+        repository.track(event, null)
+
+        // Then
+        coVerify(exactly = 1) { dataSource.sendEvent(event, null) }
+    }
+
+    @Test
+    fun `when track is called with provider key then send event to data source with key`() = runTest {
+        // Given
+        val event = AnalyticsEvent.Custom("test_event")
+        val providerKey = "specific_provider"
+        coEvery { dataSource.sendEvent(event, providerKey) } returns Unit
+
+        // When
+        repository.track(event, providerKey)
+
+        // Then
+        coVerify(exactly = 1) { dataSource.sendEvent(event, providerKey) }
+    }
 
     @Test
     fun `when addProvider is called then add provider to data source`() {

@@ -1,5 +1,16 @@
 pluginManagement {
+    val repositoryUrl = providers.gradleProperty("repositoryUrl").get()
+
+    fun MavenArtifactRepository.setupGithub(repositoryName: String) {
+        url = uri("$repositoryUrl/$repositoryName")
+        credentials {
+            username = System.getenv("GITHUB_ACTOR") ?: providers.gradleProperty("gpr.user").orNull
+            password = System.getenv("GITHUB_TOKEN") ?: providers.gradleProperty("gpr.key").orNull
+        }
+    }
+
     repositories {
+        maven { setupGithub("pluginkit-android") }
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -8,20 +19,31 @@ pluginManagement {
             }
         }
         mavenCentral()
-        mavenLocal()
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
+    val repositoryUrl = providers.gradleProperty("repositoryUrl").get()
+    val catalogVersion = providers.gradleProperty("catalogVersion").get()
+
+    fun MavenArtifactRepository.setupGithub(repositoryName: String) {
+        url = uri("$repositoryUrl/$repositoryName")
+        credentials {
+            username = System.getenv("GITHUB_ACTOR") ?: providers.gradleProperty("gpr.user").orNull
+            password = System.getenv("GITHUB_TOKEN") ?: providers.gradleProperty("gpr.key").orNull
+        }
+    }
+
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
+        maven { setupGithub("pluginkit-android") }
+        maven { setupGithub("analyticskit-android") }
         google()
-        mavenLocal()
         mavenCentral()
     }
+
     versionCatalogs {
-        val projectConfig = loadProjectConfig(rootProject.projectDir)
-        val catalogVersion = projectConfig.getProperty("catalogVersion", "es.joshluq.kit.pluginkit:catalog:0.0.1-SNAPSHOT")
         create("libs") {
             from(catalogVersion)
         }
@@ -32,13 +54,3 @@ rootProject.name = "analyticskit-android"
 include(":library")
 include(":showcase")
 project(":library").name = "analyticskit"
-
-
-fun loadProjectConfig(projectDir: File): java.util.Properties {
-    val properties = java.util.Properties()
-    val propertiesFile = File(projectDir, "project-config.properties")
-    if (propertiesFile.exists()) {
-        propertiesFile.inputStream().use { properties.load(it) }
-    }
-    return properties
-}

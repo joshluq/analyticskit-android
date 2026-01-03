@@ -108,6 +108,13 @@ analyticskitManager.track(
     - `data`: Repository implementation, thread-safe `DataSource`, and `Provider` abstractions.
 - `:showcase`: A sample app demonstrating dynamic provider toggling and event tracking.
 
+## ⚙️ Configuration
+
+The project uses a `config/project-config.properties` file for centralized configuration:
+
+- `catalogVersion`: Version of the shared dependency catalog.
+- `libraryVersion`: Current version of the Analyticskit library.
+
 ## 🧪 Quality Assurance
 
 - **KDocs**: 100% API documentation for public members.

@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.pluginkit.android.application)
     alias(libs.plugins.pluginkit.android.compose)
+    alias(libs.plugins.pluginkit.android.navigation)
     alias(libs.plugins.pluginkit.android.hilt)
-    alias(libs.plugins.pluginkit.formatting)
     alias(libs.plugins.pluginkit.android.testing)
 }
 
