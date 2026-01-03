@@ -94,11 +94,4 @@ internal class AnalyticsRepositoryImpl(
     override fun clearTrace(eventName: String) {
         dataSource.clearTrace(eventName)
     }
-
-    /**
-     * Clears all accumulated event traces.
-     */
-    override fun clearAllTraces() {
-        dataSource.clearAllTraces()
-    }
 }

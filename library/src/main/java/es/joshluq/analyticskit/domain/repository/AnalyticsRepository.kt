@@ -69,9 +69,4 @@ internal interface AnalyticsRepository {
      * @param eventName The key identifying the trace.
      */
     fun clearTrace(eventName: String)
-
-    /**
-     * Clears all accumulated event traces.
-     */
-    fun clearAllTraces()
 }

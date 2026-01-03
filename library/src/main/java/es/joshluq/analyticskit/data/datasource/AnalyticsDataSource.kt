@@ -97,13 +97,6 @@ internal class AnalyticsDataSource {
     }
 
     /**
-     * Clears all accumulated event traces.
-     */
-    fun clearAllTraces() {
-        traces.clear()
-    }
-
-    /**
      * Filters the providers based on the key. If a key is provided, only the matching provider is
      * returned. If no key is provided, all providers are returned (default behavior).
      */
