@@ -4,8 +4,6 @@ import es.joshluq.analyticskit.data.datasource.AnalyticsDataSource
 import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.domain.model.AnalyticsEvent
 import es.joshluq.analyticskit.domain.repository.AnalyticsRepository
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Implementation of the [AnalyticsRepository] interface. Coordinates event tracking through the
@@ -13,8 +11,7 @@ import javax.inject.Singleton
  *
  * @property dataSource The data source for managing analytics providers.
  */
-@Singleton
-class AnalyticsRepositoryImpl @Inject constructor(
+internal class AnalyticsRepositoryImpl(
     private val dataSource: AnalyticsDataSource,
 ) : AnalyticsRepository {
     /**

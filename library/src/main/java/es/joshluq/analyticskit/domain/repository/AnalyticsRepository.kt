@@ -4,7 +4,7 @@ import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.domain.model.AnalyticsEvent
 
 /** Interface representing the repository for analytics operations. */
-interface AnalyticsRepository {
+internal interface AnalyticsRepository {
     /**
      * Tracks an analytics event.
      *

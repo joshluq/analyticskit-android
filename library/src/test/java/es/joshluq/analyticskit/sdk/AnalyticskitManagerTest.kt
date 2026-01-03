@@ -11,7 +11,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -45,7 +44,7 @@ class AnalyticskitManagerTest {
         // Given
         val event = AnalyticsEvent.Custom("test_event")
         val input = TrackEventUseCase.Input(event, null)
-        every { trackEventUseCase(input) } returns flowOf(NoneOutput)
+        every { trackEventUseCase(input) } returns Result.success(NoneOutput)
 
         // When
         manager.track(event)
@@ -59,7 +58,7 @@ class AnalyticskitManagerTest {
         // Given
         val provider: AnalyticsProvider = mockk()
         val input = AddProviderUseCase.Input(provider)
-        every { addProviderUseCase(input) } returns flowOf(NoneOutput)
+        every { addProviderUseCase(input) } returns Result.success(NoneOutput)
 
         // When
         manager.addProvider(provider)
@@ -73,7 +72,7 @@ class AnalyticskitManagerTest {
         // Given
         val key = "test_key"
         val input = RemoveProviderUseCase.Input(key)
-        every { removeProviderUseCase(input) } returns flowOf(NoneOutput)
+        every { removeProviderUseCase(input) } returns Result.success(NoneOutput)
 
         // When
         manager.removeProvider(key)

@@ -10,8 +10,8 @@ Analyticskit is a modular tool built for data collection and user behavior analy
 - **Dynamic Management**: Add or remove providers at runtime based on user preferences or app state.
 - **Rich Event Tracking**: Track custom events, screen views, and conversion funnels with type-safe models.
 - **Clean Architecture**: Strict separation of concerns with a UseCase-driven approach.
-- **Hilt Ready**: Seamless dependency injection for Android applications.
-- **High Performance**: Optimized for low overhead using structured concurrency and thread-safe collections.
+- **Zero Dependencies**: Lightweight library with no third-party dependencies (Hilt-free).
+- **High Performance**: Optimized for low overhead using thread-safe collections and efficient result handling.
 
 ## 🏗 Architecture
 
@@ -21,18 +21,22 @@ Analyticskit follows **Clean Architecture** to ensure isolation of tracking logi
 graph TD
     subgraph "Presentation Layer (SDK)"
         M[AnalyticskitManager]
+        B[AnalyticskitManager.Builder]
     end
 
-    subgraph "Domain Layer"
+    subgraph "Domain Layer (Internal)"
         UC[UseCases: Track, Add, Remove]
         R[AnalyticsRepository Interface]
-        MOD[AnalyticsEvent Sealed Class]
     end
 
-    subgraph "Data Layer"
+    subgraph "Public Models"
+        MOD[AnalyticsEvent Sealed Class]
+        P[AnalyticsProvider Interface]
+    end
+
+    subgraph "Data Layer (Internal)"
         RepoImpl[AnalyticsRepository Implementation]
         DS[AnalyticsDataSource]
-        P[AnalyticsProvider Interface]
     end
 
     subgraph "Consumer Application"
@@ -40,6 +44,7 @@ graph TD
         ExtLib[Firebase SDK]
     end
 
+    B --> M
     M --> UC
     UC --> R
     RepoImpl -- implements --> R
@@ -69,17 +74,19 @@ class ConsoleAnalyticsProvider : AnalyticsProvider {
 ```
 
 ### 2. Initialize and Manage Providers
-Inyect `AnalyticskitManager` and manage your providers dynamically.
+Use the `Builder` to create an instance of `AnalyticskitManager`.
 
 ```kotlin
-@HiltAndroidApp
 class MyApp : Application() {
-    @Inject lateinit var analyticskitManager: AnalyticskitManager
+    lateinit var analyticskitManager: AnalyticskitManager
 
     override fun onCreate() {
         super.onCreate()
-        // Add provider
-        analyticskitManager.addProvider(ConsoleAnalyticsProvider())
+        
+        // Initialize via Builder
+        analyticskitManager = AnalyticskitManager.Builder()
+            .addProvider(ConsoleAnalyticsProvider())
+            .build()
     }
 }
 ```
@@ -103,9 +110,9 @@ analyticskitManager.track(
 ## 📂 Project Structure
 
 - `:analyticskit`: The core library module.
-    - `sdk`: Public API (`AnalyticskitManager`).
-    - `domain`: Business logic, `UseCase` interfaces, and `AnalyticsEvent` models.
-    - `data`: Repository implementation, thread-safe `DataSource`, and `Provider` abstractions.
+    - `sdk`: Public API (`AnalyticskitManager` and `Builder`).
+    - `domain`: Internal business logic and public `AnalyticsEvent` models.
+    - `data`: Internal repository implementation and public `Provider` abstractions.
 - `:showcase`: A sample app demonstrating dynamic provider toggling and event tracking.
 
 ## ⚙️ Configuration
@@ -119,7 +126,7 @@ The project uses a `config/project-config.properties` file for centralized confi
 
 - **KDocs**: 100% API documentation for public members.
 - **Unit Testing**: 100% logic coverage using **JUnit 4**, **MockK**, and **Coroutines Test**.
-- **Performance**: Thread-safe provider management using `CopyOnWriteArrayList` and optimized `flowOn(Dispatchers.IO)`.
+- **Performance**: Thread-safe provider management using `CopyOnWriteArrayList` and synchronous result handling via `Result<T>`.
 
 ---
 

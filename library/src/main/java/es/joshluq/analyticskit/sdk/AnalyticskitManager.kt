@@ -1,29 +1,24 @@
 package es.joshluq.analyticskit.sdk
 
+import es.joshluq.analyticskit.data.datasource.AnalyticsDataSource
 import es.joshluq.analyticskit.data.provider.AnalyticsProvider
+import es.joshluq.analyticskit.data.repository.AnalyticsRepositoryImpl
 import es.joshluq.analyticskit.domain.model.AnalyticsEvent
 import es.joshluq.analyticskit.domain.usecase.AddProviderUseCase
 import es.joshluq.analyticskit.domain.usecase.RemoveProviderUseCase
 import es.joshluq.analyticskit.domain.usecase.TrackEventUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.launchIn
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Main entry point for the Analyticskit library. This manager coordinates event tracking and
  * provider management using UseCases.
+ *
+ * Use the [Builder] to create an instance of this manager.
  */
-@Singleton
-class AnalyticskitManager @Inject constructor(
+class AnalyticskitManager private constructor(
     private val trackEventUseCase: TrackEventUseCase,
     private val addProviderUseCase: AddProviderUseCase,
     private val removeProviderUseCase: RemoveProviderUseCase,
 ) {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-
     /**
      * Tracks an analytics event.
      *
@@ -34,7 +29,7 @@ class AnalyticskitManager @Inject constructor(
         event: AnalyticsEvent,
         providerKey: String? = null,
     ) {
-        trackEventUseCase(TrackEventUseCase.Input(event, providerKey)).launchIn(scope)
+        trackEventUseCase(TrackEventUseCase.Input(event, providerKey))
     }
 
     /**
@@ -43,7 +38,7 @@ class AnalyticskitManager @Inject constructor(
      * @param provider The provider to be added.
      */
     fun addProvider(provider: AnalyticsProvider) {
-        addProviderUseCase(AddProviderUseCase.Input(provider)).launchIn(scope)
+        addProviderUseCase(AddProviderUseCase.Input(provider))
     }
 
     /**
@@ -52,6 +47,41 @@ class AnalyticskitManager @Inject constructor(
      * @param key The key of the provider to be removed.
      */
     fun removeProvider(key: String) {
-        removeProviderUseCase(RemoveProviderUseCase.Input(key)).launchIn(scope)
+        removeProviderUseCase(RemoveProviderUseCase.Input(key))
+    }
+
+    /**
+     * Builder class for [AnalyticskitManager].
+     */
+    class Builder {
+        private val providers = mutableListOf<AnalyticsProvider>()
+
+        /**
+         * Adds an initial provider to the manager.
+         *
+         * @param provider The provider to be added.
+         * @return The builder instance.
+         */
+        fun addProvider(provider: AnalyticsProvider) = apply {
+            providers.add(provider)
+        }
+
+        /**
+         * Builds the [AnalyticskitManager] instance.
+         *
+         * @return A new instance of [AnalyticskitManager].
+         */
+        fun build(): AnalyticskitManager {
+            val dataSource = AnalyticsDataSource()
+            providers.forEach { dataSource.addProvider(it) }
+
+            val repository = AnalyticsRepositoryImpl(dataSource)
+
+            return AnalyticskitManager(
+                trackEventUseCase = TrackEventUseCase(repository),
+                addProviderUseCase = AddProviderUseCase(repository),
+                removeProviderUseCase = RemoveProviderUseCase(repository),
+            )
+        }
     }
 }

@@ -3,12 +3,9 @@ package es.joshluq.analyticskit.data.datasource
 import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.domain.model.AnalyticsEvent
 import java.util.concurrent.CopyOnWriteArrayList
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /** Data source for managing and dispatching events to multiple analytics providers. */
-@Singleton
-class AnalyticsDataSource @Inject constructor() {
+internal class AnalyticsDataSource {
     private val providers = CopyOnWriteArrayList<AnalyticsProvider>()
 
     /**

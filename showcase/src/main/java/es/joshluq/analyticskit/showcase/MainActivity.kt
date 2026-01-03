@@ -36,95 +36,96 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-  @Inject lateinit var analyticskitManager: AnalyticskitManager
+    @Inject
+    lateinit var analyticskitManager: AnalyticskitManager
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    enableEdgeToEdge()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
-    // Track screen view on start
-    analyticskitManager.track(AnalyticsEvent.ScreenView("MainScreen", "MainActivity"))
+        // Track screen view on start
+        analyticskitManager.track(AnalyticsEvent.ScreenView("MainScreen", "MainActivity"))
 
-    setContent {
-      ShowcaseTheme {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-          AnalyticsShowcaseScreen(
-            onTrackEvent = { name ->
-              analyticskitManager.track(
-                AnalyticsEvent.Custom(name, mapOf("timestamp" to System.currentTimeMillis()))
-              )
-            },
-            onTrackFunnel = { step ->
-              analyticskitManager.track(AnalyticsEvent.FunnelStep("checkout_funnel", step))
-            },
-            onToggleProvider = { active ->
-              if (active) {
-                analyticskitManager.addProvider(ConsoleAnalyticsProvider())
-              } else {
-                analyticskitManager.removeProvider("CONSOLE_PROVIDER")
-              }
-            },
-            modifier = Modifier.padding(innerPadding),
-          )
+        setContent {
+            ShowcaseTheme {
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    AnalyticsShowcaseScreen(
+                        onTrackEvent = { name ->
+                            analyticskitManager.track(
+                                AnalyticsEvent.Custom(name, mapOf("timestamp" to System.currentTimeMillis())),
+                            )
+                        },
+                        onTrackFunnel = { step ->
+                            analyticskitManager.track(AnalyticsEvent.FunnelStep("checkout_funnel", step))
+                        },
+                        onToggleProvider = { active ->
+                            if (active) {
+                                analyticskitManager.addProvider(ConsoleAnalyticsProvider())
+                            } else {
+                                analyticskitManager.removeProvider("CONSOLE_PROVIDER")
+                            }
+                        },
+                        modifier = Modifier.padding(innerPadding),
+                    )
+                }
+            }
         }
-      }
     }
-  }
 }
 
 @Composable
 fun AnalyticsShowcaseScreen(
-  onTrackEvent: (String) -> Unit,
-  onTrackFunnel: (String) -> Unit,
-  onToggleProvider: (Boolean) -> Unit,
-  modifier: Modifier = Modifier,
+    onTrackEvent: (String) -> Unit,
+    onTrackFunnel: (String) -> Unit,
+    onToggleProvider: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-  var isProviderActive by remember { mutableStateOf(true) }
+    var isProviderActive by remember { mutableStateOf(true) }
 
-  Column(
-    modifier = modifier.fillMaxSize().padding(16.dp),
-    verticalArrangement = Arrangement.Top,
-    horizontalAlignment = Alignment.CenterHorizontally,
-  ) {
-    Text(text = "Analyticskit Showcase", style = MaterialTheme.typography.headlineMedium)
-
-    Spacer(modifier = Modifier.height(24.dp))
-
-    // Provider Toggle Section
-    Row(
-      modifier = Modifier.fillMaxWidth(),
-      horizontalArrangement = Arrangement.SpaceBetween,
-      verticalAlignment = Alignment.CenterVertically,
+    Column(
+        modifier = modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-      Text(text = "Console Provider Active")
-      Switch(
-        checked = isProviderActive,
-        onCheckedChange = {
-          isProviderActive = it
-          onToggleProvider(it)
-        },
-      )
+        Text(text = "Analyticskit Showcase", style = MaterialTheme.typography.headlineMedium)
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Provider Toggle Section
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(text = "Console Provider Active")
+            Switch(
+                checked = isProviderActive,
+                onCheckedChange = {
+                    isProviderActive = it
+                    onToggleProvider(it)
+                },
+            )
+        }
+
+        HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+        Text(text = "Event Tracking", style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(onClick = { onTrackEvent("button_clicked") }, modifier = Modifier.fillMaxWidth()) {
+            Text("Track Custom Event")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Button(onClick = { onTrackFunnel("step_1") }, modifier = Modifier.weight(1f)) {
+                Text("Funnel Step 1")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(onClick = { onTrackFunnel("step_2") }, modifier = Modifier.weight(1f)) {
+                Text("Funnel Step 2")
+            }
+        }
     }
-
-    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-
-    Text(text = "Event Tracking", style = MaterialTheme.typography.titleMedium)
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Button(onClick = { onTrackEvent("button_clicked") }, modifier = Modifier.fillMaxWidth()) {
-      Text("Track Custom Event")
-    }
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    Row(modifier = Modifier.fillMaxWidth()) {
-      Button(onClick = { onTrackFunnel("step_1") }, modifier = Modifier.weight(1f)) {
-        Text("Funnel Step 1")
-      }
-      Spacer(modifier = Modifier.width(8.dp))
-      Button(onClick = { onTrackFunnel("step_2") }, modifier = Modifier.weight(1f)) {
-        Text("Funnel Step 2")
-      }
-    }
-  }
 }
