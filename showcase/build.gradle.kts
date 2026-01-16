@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.ApplicationExtension
+
 plugins {
     alias(libs.plugins.pluginkit.android.application)
     alias(libs.plugins.pluginkit.android.compose)
@@ -6,7 +8,7 @@ plugins {
     alias(libs.plugins.pluginkit.android.testing)
 }
 
-android {
+configure<ApplicationExtension> {
     namespace = "es.joshluq.analyticskit.showcase"
 
     defaultConfig {
