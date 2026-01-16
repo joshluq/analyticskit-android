@@ -4,7 +4,7 @@ import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.domain.model.AnalyticsEvent
 
 /** Interface representing the repository for analytics operations. */
-interface AnalyticsRepository {
+internal interface AnalyticsRepository {
     /**
      * Tracks an analytics event.
      *
@@ -29,4 +29,44 @@ interface AnalyticsRepository {
      * @param key The key of the provider to be removed.
      */
     fun removeProvider(key: String)
+
+    /**
+     * Adds a global property to a specific provider or to all providers if no key is specified.
+     *
+     * @param key The key of the property.
+     * @param value The value of the property.
+     * @param providerKey The key of the provider (optional).
+     */
+    fun addGlobalProperty(key: String, value: Any, providerKey: String? = null)
+
+    /**
+     * Removes a global property from a specific provider or from all providers if no key is specified.
+     *
+     * @param propertyKey The key of the property to be removed.
+     * @param providerKey The key of the provider (optional).
+     */
+    fun removeGlobalProperty(propertyKey: String, providerKey: String? = null)
+
+    /**
+     * Accumulates properties for a specific event trace.
+     *
+     * @param eventName The key identifying the trace (usually the final event name).
+     * @param properties The properties to add to the trace.
+     */
+    fun traceEvent(eventName: String, properties: Map<String, Any>)
+
+    /**
+     * Tracks a traced event with all accumulated properties and clears the trace.
+     *
+     * @param eventName The key identifying the trace.
+     * @param providerKey The key of the provider (optional).
+     */
+    suspend fun trackTracedEvent(eventName: String, providerKey: String? = null)
+
+    /**
+     * Clears an event trace without tracking it.
+     *
+     * @param eventName The key identifying the trace.
+     */
+    fun clearTrace(eventName: String)
 }

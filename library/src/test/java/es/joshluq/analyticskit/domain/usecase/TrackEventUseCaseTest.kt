@@ -5,7 +5,6 @@ import es.joshluq.analyticskit.domain.repository.AnalyticsRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -23,11 +22,11 @@ class TrackEventUseCaseTest {
             coEvery { repository.track(event, null) } returns Unit
 
             // When
-            val result = useCase(input).toList()
+            val result = useCase(input)
 
             // Then
             coVerify(exactly = 1) { repository.track(event, null) }
-            assertEquals(listOf(NoneOutput), result)
+            assertEquals(Result.success(NoneOutput), result)
         }
 
     @Test
@@ -40,10 +39,10 @@ class TrackEventUseCaseTest {
             coEvery { repository.track(event, providerKey) } returns Unit
 
             // When
-            val result = useCase(input).toList()
+            val result = useCase(input)
 
             // Then
             coVerify(exactly = 1) { repository.track(event, providerKey) }
-            assertEquals(listOf(NoneOutput), result)
+            assertEquals(Result.success(NoneOutput), result)
         }
 }

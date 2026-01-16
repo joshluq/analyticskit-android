@@ -6,113 +6,90 @@ Analyticskit is a modular tool built for data collection and user behavior analy
 
 ## 🚀 Key Features
 
-- **Multi-Provider Support**: Route data to multiple analytics consumers (Firebase, Mixpanel, etc.) simultaneously.
-- **Dynamic Management**: Add or remove providers at runtime based on user preferences or app state.
-- **Rich Event Tracking**: Track custom events, screen views, and conversion funnels with type-safe models.
-- **Clean Architecture**: Strict separation of concerns with a UseCase-driven approach.
-- **Hilt Ready**: Seamless dependency injection for Android applications.
-- **High Performance**: Optimized for low overhead using structured concurrency and thread-safe collections.
+- **Multi-Provider Support**: Route data to multiple analytics consumers simultaneously.
+- **Dynamic Management**: Add or remove providers at runtime.
+- **Global Properties**: Set properties that apply to all events or specific providers.
+- **Event Tracing**: Accumulate data across multiple screens before sending a final consolidated event.
+- **Clean Architecture**: Internalized business logic with a public-facing simplified API.
+- **Zero Dependencies**: Hilt-free, lightweight, and thread-safe.
+- **Synchronous API**: Fire-and-forget calls with internal coroutine management.
 
 ## 🏗 Architecture
 
-Analyticskit follows **Clean Architecture** to ensure isolation of tracking logic and ease of expansion to new analytics platforms.
+Analyticskit follows **Clean Architecture** to ensure isolation of tracking logic and ease of expansion.
 
 ```mermaid
 graph TD
     subgraph "Presentation Layer (SDK)"
         M[AnalyticskitManager]
+        B[AnalyticskitManager.Builder]
     end
 
-    subgraph "Domain Layer"
-        UC[UseCases: Track, Add, Remove]
+    subgraph "Domain Layer (Internal)"
+        UC[UseCases: Track, Trace, GlobalProps, etc.]
         R[AnalyticsRepository Interface]
-        MOD[AnalyticsEvent Sealed Class]
     end
 
-    subgraph "Data Layer"
-        RepoImpl[AnalyticsRepository Implementation]
-        DS[AnalyticsDataSource]
+    subgraph "Public Models"
+        MOD[AnalyticsEvent Sealed Class]
         P[AnalyticsProvider Interface]
     end
 
-    subgraph "Consumer Application"
-        ImplP[FirebaseProvider Implementation]
-        ExtLib[Firebase SDK]
+    subgraph "Data Layer (Internal)"
+        RepoImpl[AnalyticsRepository Implementation]
+        DS[AnalyticsDataSource]
     end
 
+    B --> M
     M --> UC
     UC --> R
     RepoImpl -- implements --> R
     RepoImpl --> DS
     DS --> P
-    ImplP -- implements --> P
-    ImplP --> ExtLib
 ```
 
 ## 🛠 Usage Example
 
-### 1. Implement a Provider
-Create a bridge between Analyticskit and your preferred service by implementing `AnalyticsProvider`.
+### 1. Initialize the Manager
+Use the `Builder` to create a singleton instance.
 
 ```kotlin
-class ConsoleAnalyticsProvider : AnalyticsProvider {
-    override val key: String = "CONSOLE_PROVIDER"
-
-    override suspend fun track(event: AnalyticsEvent) {
-        when (event) {
-            is AnalyticsEvent.Custom -> println("Event: ${event.name}")
-            is AnalyticsEvent.ScreenView -> println("Screen: ${event.screenName}")
-            is AnalyticsEvent.FunnelStep -> println("Funnel: ${event.funnelName}")
-        }
-    }
-}
+val analyticsManager = AnalyticskitManager.Builder()
+    .addProvider(MyAnalyticsProvider())
+    .build()
 ```
 
-### 2. Initialize and Manage Providers
-Inyect `AnalyticskitManager` and manage your providers dynamically.
+### 2. Global Properties
+Set properties once, send them everywhere.
 
 ```kotlin
-@HiltAndroidApp
-class MyApp : Application() {
-    @Inject lateinit var analyticskitManager: AnalyticskitManager
-
-    override fun onCreate() {
-        super.onCreate()
-        // Add provider
-        analyticskitManager.addProvider(ConsoleAnalyticsProvider())
-    }
-}
+analyticsManager.addGlobalProperty("user_type", "premium")
 ```
 
-### 3. Track Events
-Track data from any part of your application.
+### 3. Event Tracing (Agregated Data)
+Collect data from different screens and send it when ready.
 
 ```kotlin
-// Track a custom event globally
-analyticskitManager.track(
-    AnalyticsEvent.Custom("purchase_completed", mapOf("price" to 19.99))
-)
+// Screen 1
+analyticsManager.traceEvent("purchase_flow", mapOf("item_id" to "123"))
 
-// Target a specific provider
-analyticskitManager.track(
-    event = AnalyticsEvent.Custom("debug_event"),
-    providerKey = "CONSOLE_PROVIDER"
-)
+// Screen 2
+analyticsManager.traceEvent("purchase_flow", mapOf("payment_type" to "card"))
+
+// Final Screen - Sends consolidated event and clears trace
+analyticsManager.trackTracedEvent("purchase_flow")
 ```
 
-## 📂 Project Structure
-
-- `:analyticskit`: The core library module.
-    - `sdk`: Public API (`AnalyticskitManager`).
-    - `domain`: Business logic, `UseCase` interfaces, and `AnalyticsEvent` models.
-    - `data`: Repository implementation, thread-safe `DataSource`, and `Provider` abstractions.
-- `:showcase`: A sample app demonstrating dynamic provider toggling and event tracking.
+### 4. Simple Tracking
+```kotlin
+analyticsManager.track(AnalyticsEvent.Custom("button_clicked"))
+```
 
 ## 🧪 Quality Assurance
 
-- **KDocs**: 100% API documentation for public members.
-- **Unit Testing**: 100% logic coverage using **JUnit 4**, **MockK**, and **Coroutines Test**.
-- **Performance**: Thread-safe provider management using `CopyOnWriteArrayList` and optimized `flowOn(Dispatchers.IO)`.
+- **Internal Logging**: Errors are automatically logged to Logcat via `AnalyticskitManager` TAG.
+- **Thread Safety**: Uses `ConcurrentHashMap` and `CopyOnWriteArrayList` for safe multi-threaded access.
+- **Unit Testing**: Full coverage of UseCases and Manager logic.
 
 ---
 

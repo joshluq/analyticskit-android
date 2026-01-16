@@ -8,23 +8,24 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class RemoveProviderUseCaseTest {
+class TraceEventUseCaseTest {
     private val repository: AnalyticsRepository = mockk()
-    private val useCase = RemoveProviderUseCase(repository)
+    private val useCase = TraceEventUseCase(repository)
 
     @Test
-    fun `when use case is invoked then remove provider in repository`() =
+    fun `when use case is invoked then trace event in repository`() =
         runTest {
             // Given
-            val key = "test_provider_key"
-            val input = RemoveProviderUseCase.Input(key)
-            every { repository.removeProvider(key) } returns Unit
+            val eventName = "test_trace"
+            val properties = mapOf("prop" to "value")
+            val input = TraceEventUseCase.Input(eventName, properties)
+            every { repository.traceEvent(eventName, properties) } returns Unit
 
             // When
             val result = useCase(input)
 
             // Then
-            verify(exactly = 1) { repository.removeProvider(key) }
+            verify(exactly = 1) { repository.traceEvent(eventName, properties) }
             assertEquals(Result.success(NoneOutput), result)
         }
 }
