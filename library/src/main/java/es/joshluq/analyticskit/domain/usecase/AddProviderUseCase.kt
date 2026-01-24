@@ -2,6 +2,9 @@ package es.joshluq.analyticskit.domain.usecase
 
 import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.domain.repository.AnalyticsRepository
+import es.joshluq.foundationkit.usecase.NoneOutput
+import es.joshluq.foundationkit.usecase.UseCase
+import es.joshluq.foundationkit.usecase.UseCaseInput
 
 /**
  * Use case for adding an analytics provider.

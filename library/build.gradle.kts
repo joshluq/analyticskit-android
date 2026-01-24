@@ -15,7 +15,7 @@ configure<LibraryExtension> {
 }
 
 dependencies {
-    // No third-party DI dependencies to keep the SDK agnostic
+    implementation(libs.fundationkit)
 }
 
 pluginkitQuality {

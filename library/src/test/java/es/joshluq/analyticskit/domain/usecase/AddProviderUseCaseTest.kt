@@ -2,6 +2,7 @@ package es.joshluq.analyticskit.domain.usecase
 
 import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.domain.repository.AnalyticsRepository
+import es.joshluq.foundationkit.usecase.NoneOutput
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

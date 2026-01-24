@@ -38,6 +38,7 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         maven { setupGithub("pluginkit-android") }
+        maven { setupGithub("foundationkit-android") }
         maven { setupGithub("analyticskit-android") }
         google()
         mavenCentral()
