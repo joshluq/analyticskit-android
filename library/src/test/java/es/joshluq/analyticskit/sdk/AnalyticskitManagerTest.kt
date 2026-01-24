@@ -3,6 +3,7 @@ package es.joshluq.analyticskit.sdk
 import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.domain.model.AnalyticsEvent
 import es.joshluq.analyticskit.domain.usecase.*
+import es.joshluq.foundationkit.usecase.NoneOutput
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
