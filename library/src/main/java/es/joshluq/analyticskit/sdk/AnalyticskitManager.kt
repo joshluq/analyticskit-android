@@ -12,6 +12,7 @@ import es.joshluq.analyticskit.domain.usecase.RemoveProviderUseCase
 import es.joshluq.analyticskit.domain.usecase.TraceEventUseCase
 import es.joshluq.analyticskit.domain.usecase.TrackEventUseCase
 import es.joshluq.analyticskit.domain.usecase.TrackTracedEventUseCase
+import es.joshluq.foundationkit.coroutines.ScopeOwner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -31,8 +32,9 @@ class AnalyticskitManager private constructor(
     private val removeGlobalPropertyUseCase: RemoveGlobalPropertyUseCase,
     private val traceEventUseCase: TraceEventUseCase,
     private val trackTracedEventUseCase: TrackTracedEventUseCase,
-) {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+) : ScopeOwner {
+
+    override val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     /**
      * Tracks an analytics event.
