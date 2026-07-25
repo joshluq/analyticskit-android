@@ -20,4 +20,6 @@ configure<ApplicationExtension> {
 
 dependencies {
     implementation(project(":analyticskit"))
+    implementation("es.joshluq.kit:foundationkit:1.3.0")
+
 }

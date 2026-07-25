@@ -33,8 +33,9 @@ class AnalyticskitManagerTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        // Reflection is used to instantiate the private constructor for testing
-        val constructor = AnalyticskitManager::class.java.declaredConstructors[0]
+        // Reflection is used to instantiate the private constructor for testing.
+        // We find the primary constructor by parameter count to avoid issues with synthetic bridge constructors.
+        val constructor = AnalyticskitManager::class.java.declaredConstructors.first { it.parameterCount == 7 }
         constructor.isAccessible = true
         manager = constructor.newInstance(
             trackEventUseCase,
@@ -136,5 +137,19 @@ class AnalyticskitManagerTest {
 
         // Then
         coVerify(exactly = 1) { trackTracedEventUseCase(input) }
+    }
+
+    @Test
+    fun `when removeGlobalProperty is called then invoke removeGlobalPropertyUseCase`() {
+        // Given
+        val propertyKey = "global_key"
+        val input = RemoveGlobalPropertyUseCase.Input(propertyKey, null)
+        coEvery { removeGlobalPropertyUseCase(input) } returns Result.success(NoneOutput)
+
+        // When
+        manager.removeGlobalProperty(propertyKey)
+
+        // Then
+        coVerify(exactly = 1) { removeGlobalPropertyUseCase(input) }
     }
 }
