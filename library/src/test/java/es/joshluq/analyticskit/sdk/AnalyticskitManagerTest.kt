@@ -3,10 +3,12 @@ package es.joshluq.analyticskit.sdk
 import es.joshluq.analyticskit.data.provider.AnalyticsProvider
 import es.joshluq.analyticskit.domain.model.AnalyticsEvent
 import es.joshluq.analyticskit.domain.usecase.*
+import es.joshluq.foundationkit.coroutines.DispatcherProvider
 import es.joshluq.foundationkit.usecase.NoneOutput
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -28,6 +30,13 @@ class AnalyticskitManagerTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
 
+    private val dispatcherProvider = object : DispatcherProvider {
+        override val main: CoroutineDispatcher = testDispatcher
+        override val io: CoroutineDispatcher = testDispatcher
+        override val default: CoroutineDispatcher = testDispatcher
+        override val unconfined: CoroutineDispatcher = testDispatcher
+    }
+
     private lateinit var manager: AnalyticskitManager
 
     @Before
@@ -35,7 +44,7 @@ class AnalyticskitManagerTest {
         Dispatchers.setMain(testDispatcher)
         // Reflection is used to instantiate the private constructor for testing.
         // We find the primary constructor by parameter count to avoid issues with synthetic bridge constructors.
-        val constructor = AnalyticskitManager::class.java.declaredConstructors.first { it.parameterCount == 7 }
+        val constructor = AnalyticskitManager::class.java.declaredConstructors.first { it.parameterCount == 8 }
         constructor.isAccessible = true
         manager = constructor.newInstance(
             trackEventUseCase,
@@ -44,7 +53,8 @@ class AnalyticskitManagerTest {
             addGlobalPropertyUseCase,
             removeGlobalPropertyUseCase,
             traceEventUseCase,
-            trackTracedEventUseCase
+            trackTracedEventUseCase,
+            dispatcherProvider
         ) as AnalyticskitManager
     }
 
