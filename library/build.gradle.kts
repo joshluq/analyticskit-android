@@ -3,6 +3,7 @@ import com.android.build.api.dsl.LibraryExtension
 plugins {
     alias(libs.plugins.pluginkit.android.library)
     alias(libs.plugins.pluginkit.quality)
+    alias(libs.plugins.pluginkit.formatting)
     alias(libs.plugins.pluginkit.android.testing)
     alias(libs.plugins.pluginkit.android.publishing)
 }
@@ -16,18 +17,20 @@ configure<LibraryExtension> {
 
 dependencies {
     implementation("es.joshluq.kit:foundationkit:2.0.0-SNAPSHOT")
+    testImplementation("es.joshluq.kit:foundationkit-testing:2.0.0-SNAPSHOT")
 }
 
 pluginkitQuality {
     sonarHost = "https://sonarcloud.io"
-    sonarProjectKey = "joshluq_monitorkit-android"
-    koverExclusions = listOf(
-        "**.showcase.*",
-        "**.BuildConfig",
-        "**.R",
-        "**.R$*",
-        "**.*_MembersInjector"
-    )
+    sonarProjectKey = "joshluq_analyticskit-android"
+    koverExclusions =
+        listOf(
+            "**.showcase.*",
+            "**.BuildConfig",
+            "**.R",
+            "**.R$*",
+            "**.*_MembersInjector",
+        )
 }
 
 androidPublishing {
@@ -35,7 +38,7 @@ androidPublishing {
     repoUrl = "${providers.gradleProperty("repositoryUrl").get()}/${providers.gradleProperty("artifactId").get()}-android"
     repoUser = System.getenv("GITHUB_ACTOR")
     repoPassword = System.getenv("GITHUB_TOKEN")
-    version = "${project.version}${project.findProperty("versionType")}"
+    version = "${project.version}${project.findProperty("versionType") ?: ""}"
     groupId = project.group.toString()
     artifactId = providers.gradleProperty("artifactId").get()
 }

@@ -35,7 +35,6 @@ class AnalyticskitManager private constructor(
     private val trackTracedEventUseCase: TrackTracedEventUseCase,
     private val dispatcherProvider: DispatcherProvider,
 ) : ScopeOwner {
-
     override val scope = CoroutineScope(SupervisorJob() + dispatcherProvider.main)
 
     /**
@@ -85,7 +84,11 @@ class AnalyticskitManager private constructor(
      * @param value The value of the property.
      * @param providerKey The key of the specific provider (optional).
      */
-    fun addGlobalProperty(key: String, value: Any, providerKey: String? = null) {
+    fun addGlobalProperty(
+        key: String,
+        value: Any,
+        providerKey: String? = null,
+    ) {
         scope.launch {
             addGlobalPropertyUseCase(AddGlobalPropertyUseCase.Input(key, value, providerKey))
                 .onFailure { Log.e(TAG, "Error adding global property: ${it.message}", it) }
@@ -98,7 +101,10 @@ class AnalyticskitManager private constructor(
      * @param propertyKey The key of the property to be removed.
      * @param providerKey The key of the specific provider (optional).
      */
-    fun removeGlobalProperty(propertyKey: String, providerKey: String? = null) {
+    fun removeGlobalProperty(
+        propertyKey: String,
+        providerKey: String? = null,
+    ) {
         scope.launch {
             removeGlobalPropertyUseCase(RemoveGlobalPropertyUseCase.Input(propertyKey, providerKey))
                 .onFailure { Log.e(TAG, "Error removing global property: ${it.message}", it) }
@@ -112,7 +118,10 @@ class AnalyticskitManager private constructor(
      * @param eventName The key identifying the trace (usually the final event name).
      * @param properties The properties to add to the trace.
      */
-    fun traceEvent(eventName: String, properties: Map<String, Any>) {
+    fun traceEvent(
+        eventName: String,
+        properties: Map<String, Any>,
+    ) {
         scope.launch {
             traceEventUseCase(TraceEventUseCase.Input(eventName, properties))
                 .onFailure { Log.e(TAG, "Error tracing event: ${it.message}", it) }
@@ -125,7 +134,10 @@ class AnalyticskitManager private constructor(
      * @param eventName The key identifying the trace.
      * @param providerKey The key of the provider to send the event to (optional).
      */
-    fun trackTracedEvent(eventName: String, providerKey: String? = null) {
+    fun trackTracedEvent(
+        eventName: String,
+        providerKey: String? = null,
+    ) {
         scope.launch {
             trackTracedEventUseCase(TrackTracedEventUseCase.Input(eventName, providerKey))
                 .onFailure { Log.e(TAG, "Error tracking traced event: ${it.message}", it) }
@@ -144,9 +156,10 @@ class AnalyticskitManager private constructor(
          * @param provider The provider to be added.
          * @return The builder instance.
          */
-        fun addProvider(provider: AnalyticsProvider) = apply {
-            providers.add(provider)
-        }
+        fun addProvider(provider: AnalyticsProvider) =
+            apply {
+                providers.add(provider)
+            }
 
         /**
          * Builds the [AnalyticskitManager] instance.

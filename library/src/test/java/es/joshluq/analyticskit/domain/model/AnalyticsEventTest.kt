@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class AnalyticsEventTest {
-
     @Test
     fun `Custom event holds correct data`() {
         val properties = mapOf("key" to "value")

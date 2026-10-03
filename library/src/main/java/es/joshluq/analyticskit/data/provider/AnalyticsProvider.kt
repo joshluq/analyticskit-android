@@ -23,7 +23,10 @@ interface AnalyticsProvider {
      * @param key The key of the property.
      * @param value The value of the property.
      */
-    fun addGlobalProperty(key: String, value: Any)
+    fun addGlobalProperty(
+        key: String,
+        value: Any,
+    )
 
     /**
      * Removes a global property from the provider.

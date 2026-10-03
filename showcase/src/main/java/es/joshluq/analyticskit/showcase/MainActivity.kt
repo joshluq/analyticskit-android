@@ -103,7 +103,7 @@ fun ConsoleView(modifier: Modifier = Modifier) {
 
     LaunchedEffect(logs.size) {
         if (logs.isNotEmpty()) {
-            listState.animateScrollToItem(logs.size - 1)
+            listState.scrollToItem(logs.size - 1)
         }
     }
 
@@ -132,9 +132,12 @@ fun ConsoleView(modifier: Modifier = Modifier) {
             state = listState,
             modifier = Modifier.fillMaxSize()
         ) {
-            items(logs) { log ->
+            items(
+                count = logs.size,
+                key = { index -> index }
+            ) { index ->
                 Text(
-                    text = "> $log",
+                    text = "> ${logs[index]}",
                     color = Color.LightGray,
                     fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace,
