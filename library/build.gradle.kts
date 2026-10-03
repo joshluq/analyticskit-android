@@ -15,7 +15,7 @@ configure<LibraryExtension> {
 }
 
 dependencies {
-    implementation("es.joshluq.kit:foundationkit:1.3.0")
+    implementation("es.joshluq.kit:foundationkit:2.0.0-SNAPSHOT")
 }
 
 pluginkitQuality {

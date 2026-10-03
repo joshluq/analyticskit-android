@@ -1,4 +1,4 @@
-name: Publish Analyticskit Snapshot
+name: Publish Analyticskit Release
 
 on:
   push:
