@@ -12,7 +12,17 @@ object LogCollector {
 
     fun addLog(message: String) {
         _logs.update { currentLogs ->
-            (currentLogs + message).takeLast(100) // Keep last 100 logs
+            if (currentLogs.size >= 100) {
+                ArrayList<String>(100).apply {
+                    addAll(currentLogs.subList(currentLogs.size - 99, currentLogs.size))
+                    add(message)
+                }
+            } else {
+                ArrayList<String>(currentLogs.size + 1).apply {
+                    addAll(currentLogs)
+                    add(message)
+                }
+            }
         }
     }
 

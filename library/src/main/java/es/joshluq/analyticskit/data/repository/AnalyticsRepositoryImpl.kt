@@ -52,7 +52,11 @@ internal class AnalyticsRepositoryImpl(
      * @param value The value of the property.
      * @param providerKey The key of the provider (optional).
      */
-    override fun addGlobalProperty(key: String, value: Any, providerKey: String?) {
+    override fun addGlobalProperty(
+        key: String,
+        value: Any,
+        providerKey: String?,
+    ) {
         dataSource.addGlobalProperty(key, value, providerKey)
     }
 
@@ -62,7 +66,10 @@ internal class AnalyticsRepositoryImpl(
      * @param propertyKey The key of the property to be removed.
      * @param providerKey The key of the provider (optional).
      */
-    override fun removeGlobalProperty(propertyKey: String, providerKey: String?) {
+    override fun removeGlobalProperty(
+        propertyKey: String,
+        providerKey: String?,
+    ) {
         dataSource.removeGlobalProperty(propertyKey, providerKey)
     }
 
@@ -72,7 +79,10 @@ internal class AnalyticsRepositoryImpl(
      * @param eventName The key identifying the trace (usually the final event name).
      * @param properties The properties to add to the trace.
      */
-    override fun traceEvent(eventName: String, properties: Map<String, Any>) {
+    override fun traceEvent(
+        eventName: String,
+        properties: Map<String, Any>,
+    ) {
         dataSource.traceEvent(eventName, properties)
     }
 
@@ -82,7 +92,10 @@ internal class AnalyticsRepositoryImpl(
      * @param eventName The key identifying the trace.
      * @param providerKey The key of the provider (optional).
      */
-    override suspend fun trackTracedEvent(eventName: String, providerKey: String?) {
+    override suspend fun trackTracedEvent(
+        eventName: String,
+        providerKey: String?,
+    ) {
         dataSource.trackTracedEvent(eventName, providerKey)
     }
 

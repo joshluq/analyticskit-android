@@ -40,7 +40,13 @@ internal class AnalyticsDataSource {
         event: AnalyticsEvent,
         providerKey: String? = null,
     ) {
-        getProviders(providerKey).forEach { it.track(event) }
+        if (providerKey != null) {
+            providers.firstOrNull { it.key == providerKey }?.track(event)
+        } else {
+            for (provider in providers) {
+                provider.track(event)
+            }
+        }
     }
 
     /**
@@ -50,8 +56,18 @@ internal class AnalyticsDataSource {
      * @param value The value of the property.
      * @param providerKey The key of the provider (optional).
      */
-    fun addGlobalProperty(key: String, value: Any, providerKey: String? = null) {
-        getProviders(providerKey).forEach { it.addGlobalProperty(key, value) }
+    fun addGlobalProperty(
+        key: String,
+        value: Any,
+        providerKey: String? = null,
+    ) {
+        if (providerKey != null) {
+            providers.firstOrNull { it.key == providerKey }?.addGlobalProperty(key, value)
+        } else {
+            for (provider in providers) {
+                provider.addGlobalProperty(key, value)
+            }
+        }
     }
 
     /**
@@ -60,8 +76,17 @@ internal class AnalyticsDataSource {
      * @param propertyKey The key of the property to be removed.
      * @param providerKey The key of the provider (optional).
      */
-    fun removeGlobalProperty(propertyKey: String, providerKey: String? = null) {
-        getProviders(providerKey).forEach { it.removeGlobalProperty(propertyKey) }
+    fun removeGlobalProperty(
+        propertyKey: String,
+        providerKey: String? = null,
+    ) {
+        if (providerKey != null) {
+            providers.firstOrNull { it.key == providerKey }?.removeGlobalProperty(propertyKey)
+        } else {
+            for (provider in providers) {
+                provider.removeGlobalProperty(propertyKey)
+            }
+        }
     }
 
     /**
@@ -70,7 +95,10 @@ internal class AnalyticsDataSource {
      * @param eventName The key identifying the trace (usually the final event name).
      * @param properties The properties to add to the trace.
      */
-    fun traceEvent(eventName: String, properties: Map<String, Any>) {
+    fun traceEvent(
+        eventName: String,
+        properties: Map<String, Any>,
+    ) {
         val trace = traces.getOrPut(eventName) { ConcurrentHashMap() }
         trace.putAll(properties)
     }
@@ -81,7 +109,10 @@ internal class AnalyticsDataSource {
      * @param eventName The key identifying the trace.
      * @param providerKey The key of the provider (optional).
      */
-    suspend fun trackTracedEvent(eventName: String, providerKey: String? = null) {
+    suspend fun trackTracedEvent(
+        eventName: String,
+        providerKey: String? = null,
+    ) {
         val accumulatedProperties = traces.remove(eventName) ?: emptyMap()
         val event = AnalyticsEvent.Custom(eventName, accumulatedProperties)
         sendEvent(event, providerKey)
@@ -95,15 +126,4 @@ internal class AnalyticsDataSource {
     fun clearTrace(eventName: String) {
         traces.remove(eventName)
     }
-
-    /**
-     * Filters the providers based on the key. If a key is provided, only the matching provider is
-     * returned. If no key is provided, all providers are returned (default behavior).
-     */
-    private fun getProviders(key: String?): List<AnalyticsProvider> =
-        if (key != null) {
-            providers.filter { it.key == key }
-        } else {
-            providers
-        }
 }
